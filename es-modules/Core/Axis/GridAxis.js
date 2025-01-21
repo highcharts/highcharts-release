@@ -197,7 +197,7 @@ function onAfterGetTitlePosition(e) {
         // Compute anchor points for each of the title align options
         const { axisTitle, height: axisHeight, horiz, left: axisLeft, offset, opposite, options, top: axisTop, width: axisWidth } = axis;
         const tickSize = axis.tickSize();
-        const titleWidth = axisTitle && axisTitle.getBBox().width;
+        const titleWidth = axisTitle?.getBBox().width;
         const xOption = options.title.x;
         const yOption = options.title.y;
         const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
@@ -299,7 +299,7 @@ function onAfterRender() {
                     > _________________________
         Into this:    |______|______|______|__|
                                                 */
-        if (axis.grid && axis.grid.isOuterAxis() && axis.axisLine) {
+        if (axis.grid?.isOuterAxis() && axis.axisLine) {
             const lineWidth = options.lineWidth;
             if (lineWidth) {
                 const linePath = axis.getLinePath(lineWidth), startPoint = linePath[0], endPoint = linePath[1], 
@@ -383,13 +383,12 @@ function onAfterRender() {
                 axis.axisLine[axis.showAxis ? 'show' : 'hide']();
             }
         }
-        (grid && grid.columns || []).forEach((column) => column.render());
+        (grid?.columns || []).forEach((column) => column.render());
         // Manipulate the tick mark visibility
         // based on the axis.max- allows smooth scrolling.
         if (!axis.horiz &&
             axis.chart.hasRendered &&
-            (axis.scrollbar ||
-                (axis.linkedParent && axis.linkedParent.scrollbar)) &&
+            (axis.scrollbar || axis.linkedParent?.scrollbar) &&
             axis.tickPositions.length) {
             const tickmarkOffset = axis.tickmarkOffset, lastTick = axis.tickPositions[axis.tickPositions.length - 1], firstTick = axis.tickPositions[0];
             let label, tickMark;
@@ -434,7 +433,7 @@ function onAfterRender() {
  */
 function onAfterSetAxisTranslation() {
     const axis = this;
-    const tickInfo = axis.tickPositions && axis.tickPositions.info;
+    const tickInfo = axis.tickPositions?.info;
     const options = axis.options;
     const gridOptions = options.grid || {};
     const userLabels = axis.userOptions.labels || {};
@@ -570,9 +569,7 @@ function onAfterSetOptions(e) {
                 !defined(userOptions.tickInterval) &&
                 !defined(userOptions.units)) {
                 gridAxisOptions.tickPositioner = function (min, max) {
-                    const parentInfo = (this.linkedParent &&
-                        this.linkedParent.tickPositions &&
-                        this.linkedParent.tickPositions.info);
+                    const parentInfo = this.linkedParent?.tickPositions?.info;
                     if (parentInfo) {
                         const units = (gridAxisOptions.units || []);
                         let unitIdx, count = 1, unitName = 'year';
@@ -588,7 +585,7 @@ function onAfterSetOptions(e) {
                         if (unit) {
                             unitName = unit[0] || 'year';
                             const counts = unit[1];
-                            count = counts && counts[0] || 1;
+                            count = counts?.[0] || 1;
                             // In case the base X axis shows years, make the
                             // secondary axis show ten times the years (#11427)
                         }
@@ -629,7 +626,7 @@ function onAfterSetOptions(e) {
 function onAfterSetOptions2(e) {
     const axis = this;
     const userOptions = e.userOptions;
-    const gridOptions = userOptions && userOptions.grid || {};
+    const gridOptions = userOptions?.grid || {};
     const columns = gridOptions.columns;
     // Add column options to the parent axis. Children has their column options
     // set on init in onGridAxisAfterInit.
@@ -671,7 +668,7 @@ function onAfterTickSize(e) {
  */
 function onChartAfterSetChartSize() {
     this.axes.forEach((axis) => {
-        (axis.grid && axis.grid.columns || []).forEach((column) => {
+        (axis.grid?.columns || []).forEach((column) => {
             column.setAxisSize();
             column.setAxisTranslation();
         });
@@ -787,8 +784,7 @@ function onTickAfterGetLabelPosition(e) {
  */
 function onTickLabelFormat(ctx) {
     const { axis, value } = ctx;
-    if (axis.options.grid &&
-        axis.options.grid.enabled) {
+    if (axis.options.grid?.enabled) {
         const tickPos = axis.tickPositions;
         const series = (axis.linkedParent || axis).series[0];
         const isFirst = value === tickPos[0];
@@ -831,7 +827,7 @@ function onTickLabelFormat(ctx) {
  *       ticks and not the labels directly?
  */
 function onTrimTicks() {
-    const axis = this, options = axis.options, gridOptions = options.grid || {}, categoryAxis = axis.categories, tickPositions = axis.tickPositions, firstPos = tickPositions[0], secondPos = tickPositions[1], lastPos = tickPositions[tickPositions.length - 1], beforeLastPos = tickPositions[tickPositions.length - 2], linkedMin = axis.linkedParent && axis.linkedParent.min, linkedMax = axis.linkedParent && axis.linkedParent.max, min = linkedMin || axis.min, max = linkedMax || axis.max, tickInterval = axis.tickInterval, startLessThanMin = ( // #19845
+    const axis = this, options = axis.options, gridOptions = options.grid || {}, categoryAxis = axis.categories, tickPositions = axis.tickPositions, firstPos = tickPositions[0], secondPos = tickPositions[1], lastPos = tickPositions[tickPositions.length - 1], beforeLastPos = tickPositions[tickPositions.length - 2], linkedMin = axis.linkedParent?.min, linkedMax = axis.linkedParent?.max, min = linkedMin || axis.min, max = linkedMax || axis.max, tickInterval = axis.tickInterval, startLessThanMin = ( // #19845
     isNumber(min) &&
         min >= firstPos + tickInterval &&
         min < secondPos), endMoreThanMin = (isNumber(min) &&

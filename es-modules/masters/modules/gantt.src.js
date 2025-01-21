@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Gantt JS v@product.version@ (@product.date@)
+ * @license Highcharts Gantt JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/gantt
  * @requires highcharts
  *

@@ -93,7 +93,7 @@ class Time {
      *  Constructors
      *
      * */
-    constructor(options) {
+    constructor(options, lang) {
         /* *
          *
          *  Properties
@@ -105,6 +105,7 @@ class Time {
         this.variableTimezone = false;
         this.Date = win.Date;
         this.update(options);
+        this.lang = lang;
     }
     /* *
      *
@@ -490,7 +491,7 @@ class Time {
      *         The formatted date.
      */
     dateFormat(format, timestamp, upperCaseFirst) {
-        const lang = H.defaultOptions?.lang;
+        const lang = this.lang;
         if (!defined(timestamp) || isNaN(timestamp)) {
             return lang?.invalidDate || '';
         }
@@ -500,7 +501,7 @@ class Time {
             const localeAwareRegex = /%\[([a-zA-Z]+)\]/g;
             let match;
             while ((match = localeAwareRegex.exec(format))) {
-                format = format.replace(match[0], this.dateTimeFormat(match[1], timestamp));
+                format = format.replace(match[0], this.dateTimeFormat(match[1], timestamp, lang?.locale));
             }
         }
         // Then, replace static formats like %Y, %m, %d etc.
@@ -782,14 +783,15 @@ class Time {
         for (n in timeUnits) { // eslint-disable-line guard-for-in
             // If the range is exactly one week and we're looking at a
             // Sunday/Monday, go for the week format
-            if (range === timeUnits.week &&
+            if (range &&
+                range === timeUnits.week &&
                 +this.dateFormat('%w', timestamp) === startOfWeek &&
                 dateStr.substr(6) === blank.substr(6)) {
                 n = 'week';
                 break;
             }
             // The first format that is too great for the range
-            if (timeUnits[n] > range) {
+            if (range && timeUnits[n] > range) {
                 n = lastN;
                 break;
             }

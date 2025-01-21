@@ -78,7 +78,7 @@ class SVGElement3D extends SVGElement {
      * @private
      */
     singleSetterForParts(prop, val, values, verb, duration, complete) {
-        const elem3d = this, newAttr = {}, optionsToApply = [null, null, (verb || 'attr'), duration, complete], hasZIndexes = values && values.zIndexes;
+        const elem3d = this, newAttr = {}, optionsToApply = [null, null, (verb || 'attr'), duration, complete], hasZIndexes = values?.zIndexes;
         if (!values) {
             newAttr[prop] = val;
             optionsToApply[0] = newAttr;
@@ -86,7 +86,7 @@ class SVGElement3D extends SVGElement {
         else {
             // It is needed to deal with the whole group zIndexing
             // in case of graph rotation
-            if (hasZIndexes && hasZIndexes.group) {
+            if (hasZIndexes?.group) {
                 elem3d.attr({
                     zIndex: hasZIndexes.group
                 });

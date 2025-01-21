@@ -211,6 +211,7 @@ var DataLabel;
             seriesProto.alignDataLabel = alignDataLabel;
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
+            seriesProto.mergeArrays = mergeArrays;
             seriesProto.setDataLabelStartPos = setDataLabelStartPos;
             seriesProto.hasDataLabels = hasDataLabels;
         }
@@ -413,7 +414,7 @@ var DataLabel;
                 while (j--) {
                     // The item can be undefined if a disabled data label is
                     // succeeded by an enabled one (#19457)
-                    if (!dataLabels[j] || !dataLabels[j].isActive) {
+                    if (!dataLabels[j]?.isActive) {
                         dataLabels[j]?.destroy();
                         dataLabels.splice(j, 1);
                     }

@@ -778,8 +778,8 @@ class SVGElement {
         if (strokeWidth === 'inherit') {
             strokeWidth = 1;
         }
-        value = value && value.toLowerCase();
         if (value) {
+            value = value.toLowerCase();
             const v = value
                 .replace('shortdashdotdot', '3,1,1,1,1,1,')
                 .replace('shortdashdot', '3,1,1,1')
@@ -838,8 +838,7 @@ class SVGElement {
         wrapper.safeRemoveChild(element);
         // In case of useHTML, clean up empty containers emulating SVG groups
         // (#1960, #2393, #2697).
-        while (parentToClean &&
-            parentToClean.div &&
+        while (parentToClean?.div &&
             parentToClean.div.childNodes.length === 0) {
             grandParent = parentToClean.parentGroup;
             wrapper.safeRemoveChild(parentToClean.div);
@@ -878,7 +877,7 @@ class SVGElement {
             }
             this.pathArray = value;
             value = value.reduce((acc, seg, i) => {
-                if (!seg || !seg.join) {
+                if (!seg?.join) {
                     return (seg || '').toString();
                 }
                 return (i ? acc + ' ' : '') + seg.join(' ');
@@ -1319,11 +1318,11 @@ class SVGElement {
      */
     setRadialReference(coordinates) {
         const existingGradient = (this.element.gradient &&
-            this.renderer.gradients[this.element.gradient]);
+            this.renderer.gradients[this.element.gradient]) || void 0;
         this.element.radialReference = coordinates;
         // On redrawing objects with an existing gradient, the gradient needs
         // to be repositioned (#3801)
-        if (existingGradient && existingGradient.radAttr) {
+        if (existingGradient?.radAttr) {
             existingGradient.animate(this.renderer.getRadialAttr(coordinates, existingGradient.radAttr));
         }
         return this;

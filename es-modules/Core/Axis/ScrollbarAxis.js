@@ -52,8 +52,8 @@ var ScrollbarAxis;
     ScrollbarAxis.compose = compose;
     /** @private */
     function getExtremes(axis) {
-        const axisMin = pick(axis.options && axis.options.min, axis.min);
-        const axisMax = pick(axis.options && axis.options.max, axis.max);
+        const axisMin = pick(axis.options?.min, axis.min);
+        const axisMax = pick(axis.options?.max, axis.max);
         return {
             axisMin,
             axisMax,
@@ -82,9 +82,7 @@ var ScrollbarAxis;
      */
     function onAxisAfterInit() {
         const axis = this;
-        if (axis.options &&
-            axis.options.scrollbar &&
-            axis.options.scrollbar.enabled) {
+        if (axis.options?.scrollbar?.enabled) {
             // Predefined options:
             axis.options.scrollbar.vertical = !axis.horiz;
             axis.options.startOnTick = axis.options.endOnTick = false;

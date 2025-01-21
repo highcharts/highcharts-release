@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/xrange
  * @requires highcharts
  *
@@ -379,7 +379,7 @@ class XRangePoint extends ColumnPoint {
     static getColorByCategory(series, point) {
         const colors = series.options.colors || series.chart.options.colors, colorCount = colors ?
             colors.length :
-            series.chart.options.chart.colorCount, colorIndex = point.y % colorCount, color = colors && colors[colorIndex];
+            series.chart.options.chart.colorCount, colorIndex = point.y % colorCount, color = colors?.[colorIndex];
         return {
             colorIndex: colorIndex,
             color: color
@@ -639,7 +639,7 @@ class XRangeSeries extends ColumnSeries {
     }
     alignDataLabel(point) {
         const oldPlotX = point.plotX;
-        point.plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX);
+        point.plotX = pick(point.dlBox?.centerX, point.plotX);
         if (point.dataLabel && point.shapeArgs?.width) {
             point.dataLabel.css({
                 width: `${point.shapeArgs.width}px`
@@ -652,7 +652,7 @@ class XRangeSeries extends ColumnSeries {
      * @private
      */
     translatePoint(point) {
-        const xAxis = this.xAxis, yAxis = this.yAxis, metrics = this.columnMetrics, options = this.options, minPointLength = options.minPointLength || 0, oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2, seriesXOffset = this.pointXOffset = metrics.offset, posX = pick(point.x2, point.x + (point.len || 0)), borderRadius = options.borderRadius, plotTop = this.chart.plotTop, plotLeft = this.chart.plotLeft;
+        const xAxis = this.xAxis, yAxis = this.yAxis, metrics = this.columnMetrics, options = this.options, minPointLength = options.minPointLength || 0, oldColWidth = (point.shapeArgs?.width || 0) / 2, seriesXOffset = this.pointXOffset = metrics.offset, posX = pick(point.x2, point.x + (point.len || 0)), borderRadius = options.borderRadius, plotTop = this.chart.plotTop, plotLeft = this.chart.plotLeft;
         let plotX = point.plotX, plotX2 = xAxis.translate(posX, 0, 0, 0, 1);
         const length = Math.abs(plotX2 - plotX), inverted = this.chart.inverted, borderWidth = pick(options.borderWidth, 1);
         let widthDifference, partialFill, yOffset = metrics.offset, pointHeight = Math.round(metrics.width), dlLeft, dlRight, dlWidth, clipRectWidth;

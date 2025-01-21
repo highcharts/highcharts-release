@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/data
  * @requires highcharts
  *
@@ -183,7 +183,7 @@ function ajax(settings) {
         return false;
     }
     r.open((settings.type || 'get').toUpperCase(), settings.url, true);
-    if (!settings.headers || !settings.headers['Content-Type']) {
+    if (!settings.headers?.['Content-Type']) {
         r.setRequestHeader('Content-Type', headers[settings.dataType || 'json'] || headers.text);
     }
     objectEach(settings.headers, function (val, key) {
@@ -210,7 +210,7 @@ function ajax(settings) {
                         }
                     }
                 }
-                return settings.success && settings.success(res, r);
+                return settings.success?.(res, r);
             }
             handleError(r, r.responseText);
         }

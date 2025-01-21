@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/annotations
  * @requires highcharts
  *
@@ -5052,7 +5052,7 @@ function onNavigationBindingsShowPopup(config) {
         this.popup = new Popup_Popup(this.chart.container, (this.chart.options.navigation.iconsURL ||
             (this.chart.options.stockTools &&
                 this.chart.options.stockTools.gui.iconsURL) ||
-            'https://code.highcharts.com/12.1.2/gfx/stock-icons/'), this.chart);
+            'https://code.highcharts.com/12.1.2-modified/gfx/stock-icons/'), this.chart);
     }
     this.popup.showForm(config.formType, this.chart, config.options, config.onSubmit);
 }
@@ -6234,7 +6234,7 @@ const navigation = {
      * from a different server.
      *
      * @type      {string}
-     * @default   https://code.highcharts.com/12.1.2/gfx/stock-icons/
+     * @default   https://code.highcharts.com/12.1.2-modified/gfx/stock-icons/
      * @since     7.1.3
      * @apioption navigation.iconsURL
      */

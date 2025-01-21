@@ -351,7 +351,7 @@ class Axis {
         numericSymbolDetector = axis.logarithmic ?
             Math.abs(value) :
             axis.tickInterval;
-        let i = numericSymbols && numericSymbols.length, multi, ret;
+        let i = numericSymbols?.length, multi, ret;
         if (categories) {
             ret = `${this.value}`;
         }
@@ -1023,7 +1023,7 @@ class Axis {
                 });
             }
             // Record minPointOffset and pointRangePadding
-            ordinalCorrection = (axis.ordinal && axis.ordinal.slope && closestPointRange) ?
+            ordinalCorrection = (axis.ordinal?.slope && closestPointRange) ?
                 axis.ordinal.slope / closestPointRange :
                 1; // #988, #1853
             axis.minPointOffset = minPointOffset =
@@ -1036,7 +1036,7 @@ class Axis {
             // The `closestPointRange` is the closest distance between points.
             // In columns it is mostly equal to pointRange, but in lines
             // pointRange is 0 while closestPointRange is some other value
-            if (isXAxis && closestPointRange) {
+            if (isXAxis) {
                 axis.closestPointRange = closestPointRange;
             }
         }
@@ -1266,7 +1266,9 @@ class Axis {
         dateTime &&
             !axis.series.some((s) => !s.sorted) ?
             axis.closestPointRange : 0);
-        if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
+        if (!tickIntervalOption &&
+            minTickInterval &&
+            axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
         }
         // For linear axes, normalize the interval
@@ -1424,7 +1426,10 @@ class Axis {
     trimTicks(tickPositions, startOnTick, endOnTick) {
         const roundedMin = tickPositions[0], roundedMax = tickPositions[tickPositions.length - 1], minPointOffset = (!this.isOrdinal && this.minPointOffset) || 0; // (#12716)
         fireEvent(this, 'trimTicks');
-        if (!this.isLinked) {
+        if (!this.isLinked ||
+            // Linked non-grid axes should trim ticks, #21743.
+            // Grid axis has custom handling of ticks.
+            !this.grid) {
             if (startOnTick && roundedMin !== -Infinity) { // #6502
                 this.min = roundedMin;
             }
@@ -1698,20 +1703,20 @@ class Axis {
             // When x axis is dirty, we need new data extremes for y as
             // well:
             isXAxisDirty = (isXAxisDirty ||
-                (series.xAxis && series.xAxis.isDirty) ||
+                series.xAxis?.isDirty ||
                 false);
         });
         // Set the new axisLength
         axis.setAxisSize();
-        const isDirtyAxisLength = axis.len !== (axis.old && axis.old.len);
+        const isDirtyAxisLength = axis.len !== axis.old?.len;
         // Do we really need to go through all this?
         if (isDirtyAxisLength ||
             isDirtyData ||
             isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
-            axis.userMin !== (axis.old && axis.old.userMin) ||
-            axis.userMax !== (axis.old && axis.old.userMax) ||
+            axis.userMin !== axis.old?.userMin ||
+            axis.userMax !== axis.old?.userMax ||
             axis.alignToOthers()) {
             if (stacking && coll === 'yAxis') {
                 stacking.buildStacks();
@@ -2126,7 +2131,7 @@ class Axis {
         }
         // Apply general and specific CSS
         tickPositions.forEach(function (pos) {
-            const tick = ticks[pos], label = tick && tick.label, widthOption = labelStyleOptions.width, css = {};
+            const tick = ticks[pos], label = tick?.label, widthOption = labelStyleOptions.width, css = {};
             if (label) {
                 // This needs to go before the CSS in old IE (#4502)
                 label.attr(attr);
@@ -2363,7 +2368,7 @@ class Axis {
             const tickSize = this.tickSize('tick');
             axisOffset[side] = Math.max(axisOffset[side], (axis.axisTitleMargin || 0) + titleOffset +
                 directionFactor * axis.offset, labelOffsetPadded, // #3027
-            tickPositions && tickPositions.length && tickSize ?
+            tickPositions?.length && tickSize ?
                 tickSize[0] + directionFactor * axis.offset :
                 0 // #4866
             );
@@ -2524,7 +2529,7 @@ class Axis {
         // Linked axes need an extra check to find out if
         if (!isLinked ||
             (pos >= axis.min && pos <= axis.max) ||
-            (axis.grid && axis.grid.isColumn)) {
+            axis.grid?.isColumn) {
             if (!ticks[pos]) {
                 ticks[pos] = new Tick(axis, pos);
             }
@@ -2679,7 +2684,7 @@ class Axis {
             axisTitle.isNew = false;
         }
         // Stacked totals:
-        if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {
+        if (stackLabelOptions?.enabled && axis.stacking) {
             axis.stacking.renderStackTotals();
         }
         // End stacked totals
@@ -2792,13 +2797,13 @@ class Axis {
      * @emits Highcharts.Axis#event:drawCrosshair
      */
     drawCrosshair(e, point) {
-        const options = this.crosshair, snap = pick(options && options.snap, true), chart = this.chart;
+        const options = this.crosshair, snap = options?.snap ?? true, chart = this.chart;
         let path, pos, categorized, graphic = this.cross, crossOptions;
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
         // Use last available event when updating non-snapped crosshairs without
         // mouse interaction (#5287)
         if (!e) {
-            e = this.cross && this.cross.e;
+            e = this.cross?.e;
         }
         if (
         // Disabled in options
@@ -2836,8 +2841,8 @@ class Axis {
                     // polar chart
                     extend(crossOptions, {
                         isCrosshair: true,
-                        chartX: e && e.chartX,
-                        chartY: e && e.chartY,
+                        chartX: e?.chartX,
+                        chartY: e?.chartY,
                         point: point
                     });
                 }

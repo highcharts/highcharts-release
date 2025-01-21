@@ -115,8 +115,7 @@ class ZAxis extends Axis {
     setAxisSize() {
         const chart = this.chart;
         super.setAxisSize();
-        this.width = this.len = (chart.options.chart.options3d &&
-            chart.options.chart.options3d.depth) || 0;
+        this.width = this.len = chart.options.chart.options3d?.depth || 0;
         this.right = chart.chartWidth - this.width - this.left;
     }
 }

@@ -323,7 +323,7 @@ class ColorAxis extends Axis {
      * @emits Highcharts.ColorAxis#event:drawCrosshair
      */
     drawCrosshair(e, point) {
-        const axis = this, legendItem = axis.legendItem || {}, plotX = point && point.plotX, plotY = point && point.plotY, axisPos = axis.pos, axisLen = axis.len;
+        const axis = this, legendItem = axis.legendItem || {}, plotX = point?.plotX, plotY = point?.plotY, axisPos = axis.pos, axisLen = axis.len;
         let crossPos;
         if (point) {
             crossPos = axis.toPixels(point.getNestedProperty(point.series.colorKey));
@@ -402,7 +402,7 @@ class ColorAxis extends Axis {
             axis.destroyItems();
         }
         super.update(newOptions, redraw);
-        if (axis.legendItem && axis.legendItem.label) {
+        if (axis.legendItem?.label) {
             axis.setLegendColor();
             legend.colorizeItem(this, true);
         }

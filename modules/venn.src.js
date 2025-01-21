@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/venn
  * @requires highcharts
  *
@@ -1850,11 +1850,9 @@ class VennSeries extends ScatterSeries {
                     // animation
                     if (args.d) {
                         setTimeout(() => {
-                            if (point && point.graphic) {
-                                point.graphic.animate({
-                                    opacity: 1
-                                });
-                            }
+                            point?.graphic?.animate({
+                                opacity: 1
+                            });
                         }, animOptions.duration);
                     }
                 }
@@ -1887,7 +1885,7 @@ class VennSeries extends ScatterSeries {
                 attribs: attribs,
                 group: group,
                 renderer: renderer,
-                shapeType: shapeArgs && shapeArgs.d ? 'path' : 'circle'
+                shapeType: shapeArgs?.d ? 'path' : 'circle'
             });
         }
     }
@@ -1908,7 +1906,7 @@ class VennSeries extends ScatterSeries {
      * Returns the calculated attributes.
      */
     pointAttribs(point, state) {
-        const series = this, seriesOptions = series.options || {}, pointOptions = point && point.options || {}, stateOptions = (state && seriesOptions.states[state]) || {}, options = merge(seriesOptions, { color: point && point.color }, pointOptions, stateOptions);
+        const series = this, seriesOptions = series.options || {}, pointOptions = point?.options || {}, stateOptions = (state && seriesOptions.states[state]) || {}, options = merge(seriesOptions, { color: point?.color }, pointOptions, stateOptions);
         // Return resulting values for the attributes.
         return {
             'fill': color(options.color)
@@ -1943,7 +1941,7 @@ class VennSeries extends ScatterSeries {
         }), scaling = VennSeries.getScale(chart.plotWidth, chart.plotHeight, field), scale = scaling.scale, centerX = scaling.centerX, centerY = scaling.centerY;
         // Iterate all points and calculate and draw their graphics.
         for (const point of this.points) {
-            const sets = VennSeries_isArray(point.sets) ? point.sets : [], id = sets.join(), shape = mapOfIdToShape[id], dataLabelValues = mapOfIdToLabelValues[id] || {}, dlOptions = point.options && point.options.dataLabels;
+            const sets = VennSeries_isArray(point.sets) ? point.sets : [], id = sets.join(), shape = mapOfIdToShape[id], dataLabelValues = mapOfIdToLabelValues[id] || {}, dlOptions = point.options?.dataLabels;
             let shapeArgs, dataLabelWidth = dataLabelValues.width, dataLabelPosition = dataLabelValues.position;
             if (shape) {
                 if (shape.r) {

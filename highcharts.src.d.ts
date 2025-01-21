@@ -220,15 +220,12 @@ export type BreadcrumbsClickCallbackFunction = (event: Event, options: Breadcrum
 /**
  * Callback function to format the breadcrumb text from scratch.
  *
- * @param event
- *        Event.
- *
  * @param options
  *        Breadcrumb options.
  *
  * @return Formatted text or false
  */
-export type BreadcrumbsFormatterCallbackFunction = (event: Event, options: BreadcrumbOptions) => string;
+export type BreadcrumbsFormatterCallbackFunction = (options: BreadcrumbOptions) => string;
 export type BubbleSizeByValue = ("area"|"width");
 export type ButtonRelativeToValue = ("plotBox"|"spacingBox");
 /**
@@ -10465,7 +10462,7 @@ export interface ExportingOptions {
      * converting the SVG string to an image format. By default this points to
      * Highchart's free web service.
      */
-    url?: string;
+    url?: object;
     /**
      * (Highcharts, Highstock, Highmaps, Gantt) Use multi level headers in data
      * table. If csv.columnHeaderFormatter is defined, it has to return objects
@@ -10883,8 +10880,8 @@ export interface GlobalButtonThemeStyleOptions {
 }
 /**
  * (Highcharts, Highstock, Highmaps, Gantt) Global options that don't apply to
- * each chart. These options, like the `lang` options, must be set using the
- * `Highcharts.setOptions` method. (see online documentation for example)
+ * each chart. These options must be set using the `Highcharts.setOptions`
+ * method. (see online documentation for example)
  */
 export interface GlobalOptions {
     /**
@@ -18234,9 +18231,8 @@ export interface Options {
     exporting?: ExportingOptions;
     /**
      * (Highcharts, Highstock, Highmaps, Gantt) Global options that don't apply
-     * to each chart. These options, like the `lang` options, must be set using
-     * the `Highcharts.setOptions` method. (see online documentation for
-     * example)
+     * to each chart. These options must be set using the
+     * `Highcharts.setOptions` method. (see online documentation for example)
      */
     global?: GlobalOptions;
     /**
@@ -81097,6 +81093,10 @@ export interface SeriesLastPriceOptionsObject {
      */
     color?: string;
     /**
+     * (Highstock) Name of the dash style to use for the line of last price.
+     */
+    dashStyle?: DashStyleValue;
+    /**
      * (Highstock) Enable or disable the indicator.
      */
     enabled?: boolean;
@@ -81107,6 +81107,10 @@ export interface SeriesLastPriceOptionsObject {
      * `.highcharts-crosshair-label` class.
      */
     label?: SeriesLastPriceLabelOptionsObject;
+    /**
+     * (Highstock) Width of the last price line.
+     */
+    width?: number;
 }
 /**
  * (Highstock) A label on the axis next to the crosshair.
@@ -81169,6 +81173,16 @@ export interface SeriesLastVisiblePriceLabelOptionsObject {
  */
 export interface SeriesLastVisiblePriceOptionsObject {
     /**
+     * (Highstock) The color of the line of last visible price. By default,
+     * color is not applied and the line is not visible.
+     */
+    color?: string;
+    /**
+     * (Highstock) Name of the dash style to use for the line of last visible
+     * price.
+     */
+    dashStyle?: DashStyleValue;
+    /**
      * (Highstock) Enable or disable the indicator.
      */
     enabled?: boolean;
@@ -81179,6 +81193,10 @@ export interface SeriesLastVisiblePriceOptionsObject {
      * `.highcharts-crosshair-label` class.
      */
     label?: SeriesLastVisiblePriceLabelOptionsObject;
+    /**
+     * (Highstock) Width of the last visible price line.
+     */
+    width?: number;
 }
 /**
  * Information about the event.
@@ -96182,6 +96200,10 @@ export class Point {
      */
     plotY?: number;
     /**
+     * Array of all hovered points when using shared tooltips.
+     */
+    points?: Array<Point>;
+    /**
      * Whether the point is selected or not.
      */
     selected: boolean;
@@ -98601,12 +98623,12 @@ export function fireEvent<T>(el: T, type: string, eventArguments?: (Event|Dictio
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param chart
- *        A `Chart` instance used to get numberFormatter and time.
+ * @param owner
+ *        A `Chart` or `DataGrid` instance used to get numberFormatter and time.
  *
  * @return The formatted string.
  */
-export function format(str: string, ctx: Record<string, any>, chart?: Chart): string;
+export function format(str: string, ctx: Record<string, any>, owner?: Chart): string;
 /**
  * Get the defer as a number value from series animation options.
  *

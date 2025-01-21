@@ -87,7 +87,7 @@ function columnAnimateDrillupFrom(level) {
     if (removeGroup) {
         delete series.group;
     }
-    this.points.forEach((point) => {
+    (this.points || this.data).forEach((point) => {
         const graphic = point.graphic, animateTo = level.shapeArgs;
         if (graphic && animateTo) {
             const complete = () => {

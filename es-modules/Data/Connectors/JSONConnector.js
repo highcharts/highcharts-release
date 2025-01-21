@@ -70,7 +70,15 @@ class JSONConnector extends DataConnector {
         });
         return Promise
             .resolve(dataUrl ?
-            fetch(dataUrl).then((json) => json.json()) :
+            fetch(dataUrl).then((response) => response.json())['catch']((error) => {
+                connector.emit({
+                    type: 'loadError',
+                    detail: eventDetail,
+                    error,
+                    table
+                });
+                console.warn(`Unable to fetch data from ${dataUrl}.`); // eslint-disable-line no-console
+            }) :
             data || [])
             .then((data) => {
             if (data) {

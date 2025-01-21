@@ -423,8 +423,7 @@ var ColumnDataLabel;
                         dataLabel.css({
                             width: (Math.max(dataLabel.getBBox().width -
                                 labelPosition.sideOverflow, 0)) + 'px',
-                            textOverflow: ((dataLabel.options?.style || {})
-                                .textOverflow ||
+                            textOverflow: (dataLabel.options?.style?.textOverflow ||
                                 'ellipsis')
                         });
                         dataLabel.shortened = true;

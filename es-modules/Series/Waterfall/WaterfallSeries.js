@@ -268,7 +268,7 @@ class WaterfallSeries extends ColumnSeries {
                             actualStackX.negTotal;
                         actualStackX.stackTotal = posTotal + negTotal;
                         statesLen = actualStackX.stackState.length;
-                        if (xPoint && xPoint.isIntermediateSum) {
+                        if (xPoint?.isIntermediateSum) {
                             calculateStackState(prevSum, actualSum, 0, prevSum);
                             prevSum = actualSum;
                             actualSum = seriesThreshold;
@@ -277,7 +277,7 @@ class WaterfallSeries extends ColumnSeries {
                             interSum ^= stackThreshold;
                             stackThreshold ^= interSum;
                         }
-                        else if (xPoint && xPoint.isSum) {
+                        else if (xPoint?.isSum) {
                             calculateStackState(seriesThreshold, totalYVal, statesLen, 0);
                             stackThreshold = seriesThreshold;
                         }

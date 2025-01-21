@@ -57,7 +57,7 @@ class Series3D extends Series {
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
         series.data.forEach((rawPoint) => {
-            if (zAxis && zAxis.translate) {
+            if (zAxis?.translate) {
                 zValue = zAxis.logarithmic && zAxis.val2lin ?
                     zAxis.val2lin(rawPoint.z) :
                     rawPoint.z; // #4562

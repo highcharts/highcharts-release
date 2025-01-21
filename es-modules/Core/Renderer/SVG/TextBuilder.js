@@ -32,11 +32,11 @@ class TextBuilder {
         this.renderer = svgElement.renderer;
         this.svgElement = svgElement;
         this.width = svgElement.textWidth;
-        this.textLineHeight = textStyles && textStyles.lineHeight;
-        this.textOutline = textStyles && textStyles.textOutline;
-        this.ellipsis = Boolean(textStyles && textStyles.textOverflow === 'ellipsis');
+        this.textLineHeight = textStyles?.lineHeight;
+        this.textOutline = textStyles?.textOutline;
+        this.ellipsis = Boolean(textStyles?.textOverflow === 'ellipsis');
         this.lineClamp = textStyles?.lineClamp;
-        this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
+        this.noWrap = Boolean(textStyles?.whiteSpace === 'nowrap');
     }
     /**
      * Build an SVG representation of the pseudo HTML given in the object's
@@ -303,7 +303,7 @@ class TextBuilder {
                 }
             }
             // Modify styling
-            if (style && style.color) {
+            if (style?.color) {
                 style.fill = style.color;
             }
             // Handle breaks
@@ -312,7 +312,7 @@ class TextBuilder {
                 node.textContent = '\u200B'; // Zero-width space
                 // Trim whitespace off the beginning of new lines
                 const nextNode = nodes[i + 1];
-                if (nextNode && nextNode.textContent) {
+                if (nextNode?.textContent) {
                     nextNode.textContent =
                         nextNode.textContent.replace(/^ +/gm, '');
                 }

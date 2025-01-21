@@ -43,7 +43,7 @@ class XRangePoint extends ColumnPoint {
     static getColorByCategory(series, point) {
         const colors = series.options.colors || series.chart.options.colors, colorCount = colors ?
             colors.length :
-            series.chart.options.chart.colorCount, colorIndex = point.y % colorCount, color = colors && colors[colorIndex];
+            series.chart.options.chart.colorCount, colorIndex = point.y % colorCount, color = colors?.[colorIndex];
         return {
             colorIndex: colorIndex,
             color: color

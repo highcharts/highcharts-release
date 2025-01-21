@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/drilldown
  * @requires highcharts
  *
@@ -994,9 +994,6 @@ Breadcrumbs.defaultOptions = Breadcrumbs_BreadcrumbsDefaults.options;
  *
  * @callback Highcharts.BreadcrumbsFormatterCallbackFunction
  *
- * @param {Highcharts.Event} event
- * Event.
- *
  * @param {Highcharts.BreadcrumbOptions} options
  * Breadcrumb options.
  *
@@ -1476,7 +1473,7 @@ function columnAnimateDrillupFrom(level) {
     if (removeGroup) {
         delete series.group;
     }
-    this.points.forEach((point) => {
+    (this.points || this.data).forEach((point) => {
         const graphic = point.graphic, animateTo = level.shapeArgs;
         if (graphic && animateTo) {
             const complete = () => {
@@ -2435,7 +2432,7 @@ class ChartAdditions {
                 }
             }
         }
-        if (!chart.mapView) {
+        if (!chart.mapView && !isMultipleDrillUp) {
             chart.redraw();
         }
         if (chart.ddDupes) {

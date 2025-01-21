@@ -157,7 +157,7 @@ class MapSeries extends ScatterSeries {
                             'highcharts-name-' +
                                 point.name.replace(/ /g, '-').toLowerCase();
                     }
-                    if (point.properties && point.properties['hc-key']) {
+                    if (point.properties?.['hc-key']) {
                         className +=
                             ' highcharts-key-' +
                                 point.properties['hc-key'].toString().toLowerCase();
@@ -184,8 +184,7 @@ class MapSeries extends ScatterSeries {
                         if (animateIn || animateOut) {
                             const strokeWidth = pick(series.getStrokeWidth(series.options), 1 // Styled mode
                             ), inheritedStrokeWidth = (strokeWidth /
-                                (chart.mapView &&
-                                    chart.mapView.getScale() ||
+                                (chart.mapView?.getScale() ||
                                     1));
                             // For animating from undefined, .attr() reads the
                             // property as the starting point
@@ -233,8 +232,7 @@ class MapSeries extends ScatterSeries {
                 (series.points || []).forEach((point) => {
                     const graphic = point.graphic;
                     let strokeWidth;
-                    if (graphic &&
-                        graphic['stroke-width'] &&
+                    if (graphic?.['stroke-width'] &&
                         (strokeWidth = this.getStrokeWidth(point.options))) {
                         graphic.attr({
                             'stroke-width': strokeWidth / scale
@@ -357,8 +355,7 @@ class MapSeries extends ScatterSeries {
      */
     getStrokeWidth(options) {
         const pointAttrToOptions = this.pointAttrToOptions;
-        return options[pointAttrToOptions &&
-            pointAttrToOptions['stroke-width'] || 'borderWidth'];
+        return options[pointAttrToOptions?.['stroke-width'] || 'borderWidth'];
     }
     /**
      * Define hasData function for non-cartesian series. Returns true if the
@@ -458,7 +455,7 @@ class MapSeries extends ScatterSeries {
         // Pick up transform definitions for chart
         mapTransforms = chart.mapTransforms =
             chartOptions.mapTransforms ||
-                mapDataObject && mapDataObject['hc-transform'] ||
+                mapDataObject?.['hc-transform'] ||
                 chart.mapTransforms;
         let mapPoint, props;
         // Cache cos/sin of transform rotation angle
@@ -608,7 +605,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     translate() {
-        const series = this, doFullTranslate = series.doFullTranslate(), mapView = this.chart.mapView, projection = mapView && mapView.projection;
+        const series = this, doFullTranslate = series.doFullTranslate(), mapView = this.chart.mapView, projection = mapView?.projection;
         // Recalculate box on updated data
         if (this.chart.hasRendered && (this.isDirtyData || !this.hasRendered)) {
             this.processData();

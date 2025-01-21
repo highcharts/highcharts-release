@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/variwide
  * @requires highcharts
  *
@@ -148,7 +148,7 @@ function compose(AxisClass, TickClass) {
  */
 function onAxisAfterDrawCrosshair(e) {
     if (this.variwide && this.cross) {
-        this.cross.attr('stroke-width', (e.point && e.point.crosshairWidth));
+        this.cross.attr('stroke-width', e.point?.crosshairWidth);
     }
 }
 /**

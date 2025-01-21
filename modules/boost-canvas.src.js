@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/boost-canvas
  * @requires highcharts
  *
@@ -1705,7 +1705,10 @@ class WGLRenderer {
                 continue;
             }
             // Cull points outside the extremes
-            if (y === null || (!isYInside && !nextInside && !prevInside)) {
+            // Continue if `sdata` has only one point as `nextInside` asserts
+            // whether the next point exists and will thus be false. (#22194)
+            if (y === null || (!isYInside && sdata.length > 1 &&
+                !nextInside && !prevInside)) {
                 beginSegment();
                 continue;
             }

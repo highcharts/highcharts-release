@@ -66,7 +66,7 @@ class Fx {
      *
      */
     dSetter() {
-        const paths = this.paths, start = paths && paths[0], end = paths && paths[1], now = this.now || 0;
+        const paths = this.paths, start = paths?.[0], end = paths?.[1], now = this.now || 0;
         let path = [];
         // Land on the final path without adjustment points appended in the ends
         if (now === 1 || !start || !end) {
@@ -248,7 +248,7 @@ class Fx {
         isArea = elem.isArea, positionFactor = isArea ? 2 : 1, disableAnimation = fromD &&
             toD.length > fromD.length &&
             toD.hasStackedCliffs; // #16925
-        let shift, fullLength, i, reverse, start = fromD && fromD.slice(); // Copy
+        let shift, fullLength, i, reverse, start = fromD?.slice(); // Copy
         if (!start || disableAnimation) {
             return [end, end];
         }

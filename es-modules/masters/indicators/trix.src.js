@@ -1,5 +1,5 @@
 /**
- * @license Highstock JS v@product.version@ (@product.date@)
+ * @license Highstock JS v12.1.2-modified (2025-01-21)
  * @module highcharts/indicators/trix
  * @requires highcharts
  * @requires highcharts/modules/stock

@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/color-axis
  * @requires highcharts
  *
@@ -11,14 +11,14 @@
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(root["_Highcharts"], root["_Highcharts"]["Axis"], root["_Highcharts"]["Color"], root["_Highcharts"]["LegendSymbol"], root["_Highcharts"]["SeriesRegistry"], root["_Highcharts"]["SVGElement"], root["_Highcharts"]["Series"], root["_Highcharts"]["Chart"], root["_Highcharts"]["SVGRenderer"], root["_Highcharts"]["Templating"], root["_Highcharts"]["Series"]["types"]["scatter"], root["_Highcharts"]["Point"]);
+		module.exports = factory(root["_Highcharts"], root["_Highcharts"]["Axis"], root["_Highcharts"]["Color"], root["_Highcharts"]["LegendSymbol"], root["_Highcharts"]["SeriesRegistry"], root["_Highcharts"]["SVGElement"], root["_Highcharts"]["Series"], root["_Highcharts"]["Chart"], root["_Highcharts"]["SVGRenderer"], root["_Highcharts"]["Templating"], root["_Highcharts"]["Point"]);
 	else if(typeof define === 'function' && define.amd)
-		define("highcharts/modules/map", ["highcharts/highcharts"], function (amd1) {return factory(amd1,amd1["Axis"],amd1["Color"],amd1["LegendSymbol"],amd1["SeriesRegistry"],amd1["SVGElement"],amd1["Series"],amd1["Chart"],amd1["SVGRenderer"],amd1["Templating"],amd1["Series"],["types"],["scatter"],amd1["Point"]);});
+		define("highcharts/modules/map", ["highcharts/highcharts"], function (amd1) {return factory(amd1,amd1["Axis"],amd1["Color"],amd1["LegendSymbol"],amd1["SeriesRegistry"],amd1["SVGElement"],amd1["Series"],amd1["Chart"],amd1["SVGRenderer"],amd1["Templating"],amd1["Point"]);});
 	else if(typeof exports === 'object')
-		exports["highcharts/modules/map"] = factory(root["_Highcharts"], root["_Highcharts"]["Axis"], root["_Highcharts"]["Color"], root["_Highcharts"]["LegendSymbol"], root["_Highcharts"]["SeriesRegistry"], root["_Highcharts"]["SVGElement"], root["_Highcharts"]["Series"], root["_Highcharts"]["Chart"], root["_Highcharts"]["SVGRenderer"], root["_Highcharts"]["Templating"], root["_Highcharts"]["Series"]["types"]["scatter"], root["_Highcharts"]["Point"]);
+		exports["highcharts/modules/map"] = factory(root["_Highcharts"], root["_Highcharts"]["Axis"], root["_Highcharts"]["Color"], root["_Highcharts"]["LegendSymbol"], root["_Highcharts"]["SeriesRegistry"], root["_Highcharts"]["SVGElement"], root["_Highcharts"]["Series"], root["_Highcharts"]["Chart"], root["_Highcharts"]["SVGRenderer"], root["_Highcharts"]["Templating"], root["_Highcharts"]["Point"]);
 	else
-		root["Highcharts"] = factory(root["Highcharts"], root["Highcharts"]["Axis"], root["Highcharts"]["Color"], root["Highcharts"]["LegendSymbol"], root["Highcharts"]["SeriesRegistry"], root["Highcharts"]["SVGElement"], root["Highcharts"]["Series"], root["Highcharts"]["Chart"], root["Highcharts"]["SVGRenderer"], root["Highcharts"]["Templating"], root["Highcharts"]["Series"]["types"]["scatter"], root["Highcharts"]["Point"]);
-})(typeof window === 'undefined' ? this : window, (__WEBPACK_EXTERNAL_MODULE__944__, __WEBPACK_EXTERNAL_MODULE__532__, __WEBPACK_EXTERNAL_MODULE__620__, __WEBPACK_EXTERNAL_MODULE__500__, __WEBPACK_EXTERNAL_MODULE__512__, __WEBPACK_EXTERNAL_MODULE__28__, __WEBPACK_EXTERNAL_MODULE__820__, __WEBPACK_EXTERNAL_MODULE__960__, __WEBPACK_EXTERNAL_MODULE__540__, __WEBPACK_EXTERNAL_MODULE__984__, __WEBPACK_EXTERNAL_MODULE__632__, __WEBPACK_EXTERNAL_MODULE__260__) => {
+		root["Highcharts"] = factory(root["Highcharts"], root["Highcharts"]["Axis"], root["Highcharts"]["Color"], root["Highcharts"]["LegendSymbol"], root["Highcharts"]["SeriesRegistry"], root["Highcharts"]["SVGElement"], root["Highcharts"]["Series"], root["Highcharts"]["Chart"], root["Highcharts"]["SVGRenderer"], root["Highcharts"]["Templating"], root["Highcharts"]["Point"]);
+})(typeof window === 'undefined' ? this : window, (__WEBPACK_EXTERNAL_MODULE__944__, __WEBPACK_EXTERNAL_MODULE__532__, __WEBPACK_EXTERNAL_MODULE__620__, __WEBPACK_EXTERNAL_MODULE__500__, __WEBPACK_EXTERNAL_MODULE__512__, __WEBPACK_EXTERNAL_MODULE__28__, __WEBPACK_EXTERNAL_MODULE__820__, __WEBPACK_EXTERNAL_MODULE__960__, __WEBPACK_EXTERNAL_MODULE__540__, __WEBPACK_EXTERNAL_MODULE__984__, __WEBPACK_EXTERNAL_MODULE__260__) => {
 return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
@@ -69,13 +69,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__28__;
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__540__;
-
-/***/ }),
-
-/***/ 632:
-/***/ ((module) => {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__632__;
 
 /***/ }),
 
@@ -279,7 +272,7 @@ var ColorAxisComposition;
         let colorAxisItems = [], options, i;
         colorAxes.forEach(function (colorAxis) {
             options = colorAxis.options;
-            if (options && options.showInLegend) {
+            if (options?.showInLegend) {
                 // Data classes
                 if (options.dataClasses && options.visible) {
                     colorAxisItems = colorAxisItems.concat(colorAxis.getDataClassLegendSymbols());
@@ -334,8 +327,7 @@ var ColorAxisComposition;
      * @private
      */
     function onSeriesAfterTranslate() {
-        if (this.chart.colorAxis &&
-            this.chart.colorAxis.length ||
+        if (this.chart.colorAxis?.length ||
             this.colorAttribs) {
             this.translateColors();
         }
@@ -1399,7 +1391,7 @@ class ColorAxis extends (highcharts_Axis_commonjs_highcharts_Axis_commonjs2_high
      * @emits Highcharts.ColorAxis#event:drawCrosshair
      */
     drawCrosshair(e, point) {
-        const axis = this, legendItem = axis.legendItem || {}, plotX = point && point.plotX, plotY = point && point.plotY, axisPos = axis.pos, axisLen = axis.len;
+        const axis = this, legendItem = axis.legendItem || {}, plotX = point?.plotX, plotY = point?.plotY, axisPos = axis.pos, axisLen = axis.len;
         let crossPos;
         if (point) {
             crossPos = axis.toPixels(point.getNestedProperty(point.series.colorKey));
@@ -1478,7 +1470,7 @@ class ColorAxis extends (highcharts_Axis_commonjs_highcharts_Axis_commonjs2_high
             axis.destroyItems();
         }
         super.update(newOptions, redraw);
-        if (axis.legendItem && axis.legendItem.label) {
+        if (axis.legendItem?.label) {
             axis.setLegendColor();
             legend.colorizeItem(this, true);
         }
@@ -3030,14 +3022,14 @@ class MapPoint extends ScatterPoint {
         if (bounds) {
             // Cache point bounding box for use to position data labels, bubbles
             // etc
-            const propMiddleLon = properties && properties['hc-middle-lon'], propMiddleLat = properties && properties['hc-middle-lat'];
+            const propMiddleLon = properties?.['hc-middle-lon'], propMiddleLat = properties?.['hc-middle-lat'];
             if (mapView && MapPoint_isNumber(propMiddleLon) && MapPoint_isNumber(propMiddleLat)) {
                 const projectedPoint = projection.forward([propMiddleLon, propMiddleLat]);
                 bounds.midX = projectedPoint[0];
                 bounds.midY = projectedPoint[1];
             }
             else {
-                const propMiddleX = properties && properties['hc-middle-x'], propMiddleY = properties && properties['hc-middle-y'];
+                const propMiddleX = properties?.['hc-middle-x'], propMiddleY = properties?.['hc-middle-y'];
                 bounds.midX = (bounds.x1 + (bounds.x2 - bounds.x1) * MapPoint_pick(this.middleX, MapPoint_isNumber(propMiddleX) ? propMiddleX : 0.5));
                 let middleYFraction = MapPoint_pick(this.middleY, MapPoint_isNumber(propMiddleY) ? propMiddleY : 0.5);
                 // No geographic geometry, only path given => flip
@@ -6946,7 +6938,7 @@ class MapSeries extends ScatterSeries {
                             'highcharts-name-' +
                                 point.name.replace(/ /g, '-').toLowerCase();
                     }
-                    if (point.properties && point.properties['hc-key']) {
+                    if (point.properties?.['hc-key']) {
                         className +=
                             ' highcharts-key-' +
                                 point.properties['hc-key'].toString().toLowerCase();
@@ -6973,8 +6965,7 @@ class MapSeries extends ScatterSeries {
                         if (animateIn || animateOut) {
                             const strokeWidth = MapSeries_pick(series.getStrokeWidth(series.options), 1 // Styled mode
                             ), inheritedStrokeWidth = (strokeWidth /
-                                (chart.mapView &&
-                                    chart.mapView.getScale() ||
+                                (chart.mapView?.getScale() ||
                                     1));
                             // For animating from undefined, .attr() reads the
                             // property as the starting point
@@ -7022,8 +7013,7 @@ class MapSeries extends ScatterSeries {
                 (series.points || []).forEach((point) => {
                     const graphic = point.graphic;
                     let strokeWidth;
-                    if (graphic &&
-                        graphic['stroke-width'] &&
+                    if (graphic?.['stroke-width'] &&
                         (strokeWidth = this.getStrokeWidth(point.options))) {
                         graphic.attr({
                             'stroke-width': strokeWidth / scale
@@ -7146,8 +7136,7 @@ class MapSeries extends ScatterSeries {
      */
     getStrokeWidth(options) {
         const pointAttrToOptions = this.pointAttrToOptions;
-        return options[pointAttrToOptions &&
-            pointAttrToOptions['stroke-width'] || 'borderWidth'];
+        return options[pointAttrToOptions?.['stroke-width'] || 'borderWidth'];
     }
     /**
      * Define hasData function for non-cartesian series. Returns true if the
@@ -7247,7 +7236,7 @@ class MapSeries extends ScatterSeries {
         // Pick up transform definitions for chart
         mapTransforms = chart.mapTransforms =
             chartOptions.mapTransforms ||
-                mapDataObject && mapDataObject['hc-transform'] ||
+                mapDataObject?.['hc-transform'] ||
                 chart.mapTransforms;
         let mapPoint, props;
         // Cache cos/sin of transform rotation angle
@@ -7397,7 +7386,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     translate() {
-        const series = this, doFullTranslate = series.doFullTranslate(), mapView = this.chart.mapView, projection = mapView && mapView.projection;
+        const series = this, doFullTranslate = series.doFullTranslate(), mapView = this.chart.mapView, projection = mapView?.projection;
         // Recalculate box on updated data
         if (this.chart.hasRendered && (this.isDirtyData || !this.hasRendered)) {
             this.processData();
@@ -7959,8 +7948,311 @@ const MapPointSeriesDefaults = {
  */
 (''); // Keeps doclets above in JS file
 
-// EXTERNAL MODULE: external {"amd":["highcharts/highcharts","Series","types","scatter"],"commonjs":["highcharts","Series","types","scatter"],"commonjs2":["highcharts","Series","types","scatter"],"root":["Highcharts","Series","types","scatter"]}
-var highcharts_Series_types_scatter_commonjs_highcharts_Series_types_scatter_commonjs2_highcharts_Series_types_scatter_root_Highcharts_Series_types_scatter_ = __webpack_require__(632);
+;// ./code/es-modules/Series/Scatter/ScatterSeriesDefaults.js
+/* *
+ *
+ *  (c) 2010-2024 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+/**
+ * A scatter plot uses cartesian coordinates to display values for two
+ * variables for a set of data.
+ *
+ * @sample {highcharts} highcharts/demo/scatter/
+ *         Scatter plot
+ *
+ * @extends      plotOptions.line
+ * @excluding    cropThreshold, legendSymbolColor, pointPlacement, shadow,
+ *               useOhlcData
+ * @product      highcharts highstock
+ * @optionparent plotOptions.scatter
+ */
+const ScatterSeriesDefaults = {
+    /**
+     * The width of the line connecting the data points.
+     *
+     * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/
+     *         0 by default
+     * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/
+     *         1px
+     *
+     * @product highcharts highstock
+     */
+    lineWidth: 0,
+    findNearestPointBy: 'xy',
+    /**
+     * Apply a jitter effect for the rendered markers. When plotting
+     * discrete values, a little random noise may help telling the points
+     * apart. The jitter setting applies a random displacement of up to `n`
+     * axis units in either direction. So for example on a horizontal X
+     * axis, setting the `jitter.x` to 0.24 will render the point in a
+     * random position between 0.24 units to the left and 0.24 units to the
+     * right of the true axis position. On a category axis, setting it to
+     * 0.5 will fill up the bin and make the data appear continuous.
+     *
+     * When rendered on top of a box plot or a column series, a jitter value
+     * of 0.24 will correspond to the underlying series' default
+     * [groupPadding](
+     * https://api.highcharts.com/highcharts/plotOptions.column.groupPadding)
+     * and [pointPadding](
+     * https://api.highcharts.com/highcharts/plotOptions.column.pointPadding)
+     * settings.
+     *
+     * **Note:** With boost mode enabled, the jitter effect is not supported.
+     *
+     * @sample {highcharts} highcharts/demo/scatter-jitter
+     *         Jitter on a scatter plot
+     *
+     * @sample {highcharts} highcharts/series-scatter/jitter-boxplot
+     *         Jittered scatter plot on top of a box plot
+     *
+     * @product highcharts highstock
+     * @since 7.0.2
+     */
+    jitter: {
+        /**
+         * The maximal X offset for the random jitter effect.
+         */
+        x: 0,
+        /**
+         * The maximal Y offset for the random jitter effect.
+         */
+        y: 0
+    },
+    marker: {
+        enabled: true // Overrides auto-enabling in line series (#3647)
+    },
+    /**
+     * Sticky tracking of mouse events. When true, the `mouseOut` event
+     * on a series isn't triggered until the mouse moves over another
+     * series, or out of the plot area. When false, the `mouseOut` event on
+     * a series is triggered when the mouse leaves the area around the
+     * series' graph or markers. This also implies the tooltip. When
+     * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
+     * will be hidden when moving the mouse between series.
+     *
+     * @type      {boolean}
+     * @default   false
+     * @product   highcharts highstock highmaps
+     * @apioption plotOptions.scatter.stickyTracking
+     */
+    /**
+     * A configuration object for the tooltip rendering of each single
+     * series. Properties are inherited from [tooltip](#tooltip).
+     * Overridable properties are `headerFormat`, `pointFormat`,
+     * `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other
+     * series, in a scatter plot the series.name by default shows in the
+     * headerFormat and point.x and point.y in the pointFormat.
+     *
+     * @product highcharts highstock highmaps
+     */
+    tooltip: {
+        /**
+         * @product highcharts highstock
+         */
+        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '<span style="font-size: 0.8em"> {series.name}</span><br/>',
+        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+    }
+};
+/**
+ * A `scatter` series. If the [type](#series.scatter.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.scatter
+ * @excluding cropThreshold, dataParser, dataURL, useOhlcData
+ * @product   highcharts highstock
+ * @apioption series.scatter
+ */
+/**
+ * An array of data points for the series. For the `scatter` series
+ * type, points can be given in the following ways:
+ *
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `y` options. The `x` values will be automatically
+ *    calculated, either starting at 0 and incremented by 1, or from
+ *    `pointStart` and `pointInterval` given in the series options. If the axis
+ *    has categories, these will be used. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
+ *
+ * 2. An array of arrays with 2 values. In this case, the values correspond to
+ *    `x,y`. If the first value is a string, it is applied as the name of the
+ *    point, and the `x` value is inferred.
+ *    ```js
+ *    data: [
+ *        [0, 0],
+ *        [1, 8],
+ *        [2, 9]
+ *    ]
+ *    ```
+ *
+ * 3. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.scatter.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        y: 2,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        x: 1,
+ *        y: 4,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
+ *
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
+ * @apioption series.scatter.data
+ */
+''; // Keeps doclets above in JS file
+/* *
+ *
+ *  Default Export
+ *
+ * */
+/* harmony default export */ const Scatter_ScatterSeriesDefaults = (ScatterSeriesDefaults);
+
+;// ./code/es-modules/Series/Scatter/ScatterSeries.js
+/* *
+ *
+ *  (c) 2010-2024 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+
+
+const { column: ScatterSeries_ColumnSeries, line: LineSeries } = (highcharts_SeriesRegistry_commonjs_highcharts_SeriesRegistry_commonjs2_highcharts_SeriesRegistry_root_Highcharts_SeriesRegistry_default()).seriesTypes;
+
+const { addEvent: ScatterSeries_addEvent, extend: ScatterSeries_extend, merge: ScatterSeries_merge } = (highcharts_commonjs_highcharts_commonjs2_highcharts_root_Highcharts_default());
+/* *
+ *
+ *  Class
+ *
+ * */
+/**
+ * Scatter series type.
+ *
+ * @private
+ */
+class ScatterSeries_ScatterSeries extends LineSeries {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * Optionally add the jitter effect.
+     * @private
+     */
+    applyJitter() {
+        const series = this, jitter = this.options.jitter, len = this.points.length;
+        /**
+         * Return a repeatable, pseudo-random number based on an integer
+         * seed.
+         * @private
+         */
+        function unrandom(seed) {
+            const rand = Math.sin(seed) * 10000;
+            return rand - Math.floor(rand);
+        }
+        if (jitter) {
+            this.points.forEach(function (point, i) {
+                ['x', 'y'].forEach(function (dim, j) {
+                    if (jitter[dim] && !point.isNull) {
+                        const plotProp = `plot${dim.toUpperCase()}`, axis = series[`${dim}Axis`], translatedJitter = jitter[dim] *
+                            axis.transA;
+                        if (axis && !axis.logarithmic) {
+                            // Identify the outer bounds of the jitter range
+                            const min = Math.max(0, (point[plotProp] || 0) - translatedJitter), max = Math.min(axis.len, (point[plotProp] || 0) + translatedJitter);
+                            // Find a random position within this range
+                            point[plotProp] = min +
+                                (max - min) * unrandom(i + j * len);
+                            // Update clientX for the tooltip k-d-tree
+                            if (dim === 'x') {
+                                point.clientX = point.plotX;
+                            }
+                        }
+                    }
+                });
+            });
+        }
+    }
+    /**
+     * @private
+     */
+    drawGraph() {
+        if (this.options.lineWidth) {
+            super.drawGraph();
+        }
+        else if (this.graph) {
+            this.graph = this.graph.destroy();
+        }
+    }
+}
+/* *
+ *
+ *  Static Properties
+ *
+ * */
+ScatterSeries_ScatterSeries.defaultOptions = ScatterSeries_merge(LineSeries.defaultOptions, Scatter_ScatterSeriesDefaults);
+ScatterSeries_extend(ScatterSeries_ScatterSeries.prototype, {
+    drawTracker: ScatterSeries_ColumnSeries.prototype.drawTracker,
+    sorted: false,
+    requireSorting: false,
+    noSharedTooltip: true,
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
+});
+/* *
+ *
+ *  Events
+ *
+ * */
+/* eslint-disable no-invalid-this */
+ScatterSeries_addEvent(ScatterSeries_ScatterSeries, 'afterTranslate', function () {
+    this.applyJitter();
+});
+highcharts_SeriesRegistry_commonjs_highcharts_SeriesRegistry_commonjs2_highcharts_SeriesRegistry_root_Highcharts_SeriesRegistry_default().registerSeriesType('scatter', ScatterSeries_ScatterSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+/* harmony default export */ const Scatter_ScatterSeries = ((/* unused pure expression or super */ null && (ScatterSeries_ScatterSeries)));
+
 ;// ./code/es-modules/Series/MapPoint/MapPointSeries.js
 /* *
  *
@@ -11305,9 +11597,7 @@ class HeatmapSeries extends HeatmapSeries_ScatterSeries {
         // Setting width and height attributes on image does not affect on its
         // dimensions.
         if (state && state !== 'normal') {
-            const pointMarkerOptions = point.options.marker || {}, seriesMarkerOptions = this.options.marker || {}, seriesStateOptions = (seriesMarkerOptions.states &&
-                seriesMarkerOptions.states[state]) || {}, pointStateOptions = (pointMarkerOptions.states &&
-                pointMarkerOptions.states[state]) || {};
+            const pointMarkerOptions = point.options.marker || {}, seriesMarkerOptions = this.options.marker || {}, seriesStateOptions = (seriesMarkerOptions.states?.[state]) || {}, pointStateOptions = (pointMarkerOptions.states?.[state]) || {};
             // Set new width and height basing on state options.
             const width = (pointStateOptions.width ||
                 seriesStateOptions.width ||
@@ -11333,28 +11623,23 @@ class HeatmapSeries extends HeatmapSeries_ScatterSeries {
     pointAttribs(point, state) {
         const series = this, attr = HeatmapSeries_Series.prototype.pointAttribs.call(series, point, state), seriesOptions = series.options || {}, plotOptions = series.chart.options.plotOptions || {}, seriesPlotOptions = plotOptions.series || {}, heatmapPlotOptions = plotOptions.heatmap || {}, 
         // Get old properties in order to keep backward compatibility
-        borderColor = (point && point.options.borderColor) ||
+        borderColor = point?.options.borderColor ||
             seriesOptions.borderColor ||
             heatmapPlotOptions.borderColor ||
-            seriesPlotOptions.borderColor, borderWidth = (point && point.options.borderWidth) ||
+            seriesPlotOptions.borderColor, borderWidth = point?.options.borderWidth ||
             seriesOptions.borderWidth ||
             heatmapPlotOptions.borderWidth ||
             seriesPlotOptions.borderWidth ||
             attr['stroke-width'];
         // Apply lineColor, or set it to default series color.
-        attr.stroke = ((point && point.marker && point.marker.lineColor) ||
-            (seriesOptions.marker && seriesOptions.marker.lineColor) ||
+        attr.stroke = (point?.marker?.lineColor ||
+            seriesOptions.marker?.lineColor ||
             borderColor ||
             this.color);
         // Apply old borderWidth property if exists.
         attr['stroke-width'] = borderWidth;
         if (state && state !== 'normal') {
-            const stateOptions = HeatmapSeries_merge((seriesOptions.states &&
-                seriesOptions.states[state]), (seriesOptions.marker &&
-                seriesOptions.marker.states &&
-                seriesOptions.marker.states[state]), (point &&
-                point.options.states &&
-                point.options.states[state] || {}));
+            const stateOptions = HeatmapSeries_merge(seriesOptions.states?.[state], seriesOptions.marker?.states?.[state], point?.options.states?.[state] || {});
             attr.fill =
                 stateOptions.color ||
                     highcharts_Color_commonjs_highcharts_Color_commonjs2_highcharts_Color_root_Highcharts_Color_default().parse(attr.fill).brighten(stateOptions.brightness || 0).get();
@@ -11366,12 +11651,12 @@ class HeatmapSeries extends HeatmapSeries_ScatterSeries {
      * @private
      */
     translate() {
-        const series = this, options = series.options, { borderRadius, marker } = options, symbol = marker && marker.symbol || 'rect', shape = HeatmapSeries_symbols[symbol] ? symbol : 'rect', hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
+        const series = this, options = series.options, { borderRadius, marker } = options, symbol = marker?.symbol || 'rect', shape = HeatmapSeries_symbols[symbol] ? symbol : 'rect', hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
         series.generatePoints();
         for (const point of series.points) {
             const cellAttr = point.getCellAttributes();
             let x = Math.min(cellAttr.x1, cellAttr.x2), y = Math.min(cellAttr.y1, cellAttr.y2), width = Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0), height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
-            point.hasImage = (point.marker && point.marker.symbol || symbol || '').indexOf('url') === 0;
+            point.hasImage = (point.marker?.symbol || symbol || '').indexOf('url') === 0;
             // If marker shape is regular (square), find the shorter cell's
             // side.
             if (hasRegularShape) {
@@ -11458,7 +11743,7 @@ highcharts_SeriesRegistry_commonjs_highcharts_SeriesRegistry_commonjs2_highchart
 
 ;// ./code/es-modules/masters/modules/map.src.js
 /**
- * @license Highmaps JS v12.1.2 (2024-12-21)
+ * @license Highmaps JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/map
  * @requires highcharts
  *

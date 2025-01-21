@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/accessibility
  * @requires highcharts
  *
@@ -5065,7 +5065,7 @@ function arc(cx, cy, w, h, options) {
  * Callout shape used for default tooltips.
  */
 function callout(x, y, w, h, options) {
-    const arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX, anchorY = options && options.anchorY || 0;
+    const arrowLength = 6, halfDistance = 6, r = Math.min((options?.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options?.anchorX, anchorY = options?.anchorY || 0;
     const path = roundedRect(x, y, w, h, { r });
     if (!Symbols_isNumber(anchorX)) {
         return path;
@@ -5150,7 +5150,7 @@ function diamond(x, y, w, h) {
  *
  */
 function rect(x, y, w, h, options) {
-    if (options && options.r) {
+    if (options?.r) {
         return roundedRect(x, y, w, h, options);
     }
     return [
@@ -5429,8 +5429,8 @@ var ScrollbarAxis;
     ScrollbarAxis.compose = compose;
     /** @private */
     function getExtremes(axis) {
-        const axisMin = ScrollbarAxis_pick(axis.options && axis.options.min, axis.min);
-        const axisMax = ScrollbarAxis_pick(axis.options && axis.options.max, axis.max);
+        const axisMin = ScrollbarAxis_pick(axis.options?.min, axis.min);
+        const axisMax = ScrollbarAxis_pick(axis.options?.max, axis.max);
         return {
             axisMin,
             axisMax,
@@ -5459,9 +5459,7 @@ var ScrollbarAxis;
      */
     function onAxisAfterInit() {
         const axis = this;
-        if (axis.options &&
-            axis.options.scrollbar &&
-            axis.options.scrollbar.enabled) {
+        if (axis.options?.scrollbar?.enabled) {
             // Predefined options:
             axis.options.scrollbar.vertical = !axis.horiz;
             axis.options.startOnTick = axis.options.endOnTick = false;
@@ -8943,7 +8941,7 @@ class NewDataAnnouncer {
  * */
 
 
-const { doc: ProxyElement_doc } = (highcharts_commonjs_highcharts_commonjs2_highcharts_root_Highcharts_default());
+const { doc: ProxyElement_doc, win: ProxyElement_win } = (highcharts_commonjs_highcharts_commonjs2_highcharts_root_Highcharts_default());
 
 const { attr: ProxyElement_attr, css: ProxyElement_css, merge: ProxyElement_merge } = (highcharts_commonjs_highcharts_commonjs2_highcharts_root_Highcharts_default());
 
@@ -9118,10 +9116,13 @@ class ProxyElement {
         const posElement = this.target.visual || clickTargetElement;
         const chartDiv = this.chart.renderTo, pointer = this.chart.pointer;
         if (chartDiv && posElement?.getBoundingClientRect && pointer) {
-            const rectEl = posElement.getBoundingClientRect(), chartPos = pointer.getChartPosition();
+            const scrollTop = ProxyElement_win.scrollY ||
+                ProxyElement_doc.documentElement.scrollTop, rectEl = posElement.getBoundingClientRect(), chartPos = pointer.getChartPosition();
             return {
                 x: (rectEl.left - chartPos.left) / chartPos.scaleX,
-                y: (rectEl.top - chartPos.top) / chartPos.scaleY,
+                // #21994, Add scroll position as "getBoundingClientRect"
+                // returns the position from the viewport, not the document top.
+                y: ((rectEl.top + scrollTop) - chartPos.top) / chartPos.scaleY,
                 width: rectEl.right / chartPos.scaleX -
                     rectEl.left / chartPos.scaleX,
                 height: rectEl.bottom / chartPos.scaleY -

@@ -117,7 +117,7 @@ class DataSeriesConverter {
     updateTable(allSeries, eventDetail) {
         const table = this.table;
         let columns, series, seriesMeta, pointArrayMap, pointArrayMapLength, options, keys, data, elem, rowIndex, y, needsArrayMap, xIndex, yIndex, yValueName, yValueIndex, yValueId, id;
-        if (allSeries && allSeries.length) {
+        if (allSeries?.length) {
             this.options.seriesOptions = [];
             this.seriesMeta = [];
             this.seriesIdMap = {};

@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/highcharts-3d
  * @requires highcharts
  *
@@ -9,14 +9,14 @@
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(root["_Highcharts"], root["_Highcharts"]["Color"], root["_Highcharts"]["SeriesRegistry"], root["_Highcharts"]["RendererRegistry"], root["_Highcharts"]["Series"], root["_Highcharts"]["StackItem"], root["_Highcharts"]["Axis"], root["_Highcharts"]["Series"]["types"]["scatter"]);
+		module.exports = factory(root["_Highcharts"], root["_Highcharts"]["Color"], root["_Highcharts"]["SeriesRegistry"], root["_Highcharts"]["RendererRegistry"], root["_Highcharts"]["Series"], root["_Highcharts"]["StackItem"], root["_Highcharts"]["Axis"]);
 	else if(typeof define === 'function' && define.amd)
-		define("highcharts/highcharts-3d", ["highcharts/highcharts"], function (amd1) {return factory(amd1,amd1["Color"],amd1["SeriesRegistry"],amd1["RendererRegistry"],amd1["Series"],amd1["StackItem"],amd1["Axis"],amd1["Series"],["types"],["scatter"]);});
+		define("highcharts/highcharts-3d", ["highcharts/highcharts"], function (amd1) {return factory(amd1,amd1["Color"],amd1["SeriesRegistry"],amd1["RendererRegistry"],amd1["Series"],amd1["StackItem"],amd1["Axis"]);});
 	else if(typeof exports === 'object')
-		exports["highcharts/highcharts-3d"] = factory(root["_Highcharts"], root["_Highcharts"]["Color"], root["_Highcharts"]["SeriesRegistry"], root["_Highcharts"]["RendererRegistry"], root["_Highcharts"]["Series"], root["_Highcharts"]["StackItem"], root["_Highcharts"]["Axis"], root["_Highcharts"]["Series"]["types"]["scatter"]);
+		exports["highcharts/highcharts-3d"] = factory(root["_Highcharts"], root["_Highcharts"]["Color"], root["_Highcharts"]["SeriesRegistry"], root["_Highcharts"]["RendererRegistry"], root["_Highcharts"]["Series"], root["_Highcharts"]["StackItem"], root["_Highcharts"]["Axis"]);
 	else
-		root["Highcharts"] = factory(root["Highcharts"], root["Highcharts"]["Color"], root["Highcharts"]["SeriesRegistry"], root["Highcharts"]["RendererRegistry"], root["Highcharts"]["Series"], root["Highcharts"]["StackItem"], root["Highcharts"]["Axis"], root["Highcharts"]["Series"]["types"]["scatter"]);
-})(typeof window === 'undefined' ? this : window, (__WEBPACK_EXTERNAL_MODULE__944__, __WEBPACK_EXTERNAL_MODULE__620__, __WEBPACK_EXTERNAL_MODULE__512__, __WEBPACK_EXTERNAL_MODULE__608__, __WEBPACK_EXTERNAL_MODULE__820__, __WEBPACK_EXTERNAL_MODULE__184__, __WEBPACK_EXTERNAL_MODULE__532__, __WEBPACK_EXTERNAL_MODULE__632__) => {
+		root["Highcharts"] = factory(root["Highcharts"], root["Highcharts"]["Color"], root["Highcharts"]["SeriesRegistry"], root["Highcharts"]["RendererRegistry"], root["Highcharts"]["Series"], root["Highcharts"]["StackItem"], root["Highcharts"]["Axis"]);
+})(typeof window === 'undefined' ? this : window, (__WEBPACK_EXTERNAL_MODULE__944__, __WEBPACK_EXTERNAL_MODULE__620__, __WEBPACK_EXTERNAL_MODULE__512__, __WEBPACK_EXTERNAL_MODULE__608__, __WEBPACK_EXTERNAL_MODULE__820__, __WEBPACK_EXTERNAL_MODULE__184__, __WEBPACK_EXTERNAL_MODULE__532__) => {
 return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
@@ -39,13 +39,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__620__;
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__608__;
-
-/***/ }),
-
-/***/ 632:
-/***/ ((module) => {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__632__;
 
 /***/ }),
 
@@ -2419,7 +2412,7 @@ const { addEvent: Axis3DComposition_addEvent, merge: Axis3DComposition_merge, pi
  */
 function onAxisAfterSetOptions() {
     const axis = this, chart = axis.chart, options = axis.options;
-    if (chart.is3d && chart.is3d() && axis.coll !== 'colorAxis') {
+    if (chart.is3d?.() && axis.coll !== 'colorAxis') {
         options.tickWidth = Axis3DComposition_pick(options.tickWidth, 0);
         options.gridLineWidth = Axis3DComposition_pick(options.gridLineWidth, 1);
     }
@@ -2584,7 +2577,7 @@ function wrapAxisGetSlotWidth(proceed, tick) {
         }
         // If next label position is defined, then recalculate its position
         // basing on the perspective.
-        if (nextTick && nextTick.label && nextTick.label.xy) {
+        if (nextTick?.label?.xy) {
             nextLabelPos = Axis3DComposition_perspective3D({
                 x: nextTick.label.xy.x,
                 y: nextTick.label.xy.y,
@@ -2946,7 +2939,7 @@ class Series3D extends (highcharts_Series_commonjs_highcharts_Series_commonjs2_h
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
         series.data.forEach((rawPoint) => {
-            if (zAxis && zAxis.translate) {
+            if (zAxis?.translate) {
                 zValue = zAxis.logarithmic && zAxis.val2lin ?
                     zAxis.val2lin(rawPoint.z) :
                     rawPoint.z; // #4562
@@ -3076,7 +3069,7 @@ class SVGElement3D extends SVGElement {
      * @private
      */
     singleSetterForParts(prop, val, values, verb, duration, complete) {
-        const elem3d = this, newAttr = {}, optionsToApply = [null, null, (verb || 'attr'), duration, complete], hasZIndexes = values && values.zIndexes;
+        const elem3d = this, newAttr = {}, optionsToApply = [null, null, (verb || 'attr'), duration, complete], hasZIndexes = values?.zIndexes;
         if (!values) {
             newAttr[prop] = val;
             optionsToApply[0] = newAttr;
@@ -3084,7 +3077,7 @@ class SVGElement3D extends SVGElement {
         else {
             // It is needed to deal with the whole group zIndexing
             // in case of graph rotation
-            if (hasZIndexes && hasZIndexes.group) {
+            if (hasZIndexes?.group) {
                 elem3d.attr({
                     zIndex: hasZIndexes.group
                 });
@@ -3411,7 +3404,7 @@ var SVGRenderer3D;
             return elementProto.attr.apply(this, arguments);
         };
         result.animate = function (params, duration, complete) {
-            if (params && params.faces) {
+            if (params?.faces) {
                 while (result.faces.length > params.faces.length) {
                     result.faces.pop().destroy();
                 }
@@ -4135,8 +4128,7 @@ class ZAxis extends (highcharts_Axis_commonjs_highcharts_Axis_commonjs2_highchar
     setAxisSize() {
         const chart = this.chart;
         super.setAxisSize();
-        this.width = this.len = (chart.options.chart.options3d &&
-            chart.options.chart.options3d.depth) || 0;
+        this.width = this.len = chart.options.chart.options3d?.depth || 0;
         this.right = chart.chartWidth - this.width - this.left;
     }
 }
@@ -4884,9 +4876,311 @@ Pie3DSeries_extend(Pie3DSeries.prototype, {
  */
 ''; // Keeps doclets above after transpiledion
 
-// EXTERNAL MODULE: external {"amd":["highcharts/highcharts","Series","types","scatter"],"commonjs":["highcharts","Series","types","scatter"],"commonjs2":["highcharts","Series","types","scatter"],"root":["Highcharts","Series","types","scatter"]}
-var highcharts_Series_types_scatter_commonjs_highcharts_Series_types_scatter_commonjs2_highcharts_Series_types_scatter_root_Highcharts_Series_types_scatter_ = __webpack_require__(632);
-var highcharts_Series_types_scatter_commonjs_highcharts_Series_types_scatter_commonjs2_highcharts_Series_types_scatter_root_Highcharts_Series_types_scatter_default = /*#__PURE__*/__webpack_require__.n(highcharts_Series_types_scatter_commonjs_highcharts_Series_types_scatter_commonjs2_highcharts_Series_types_scatter_root_Highcharts_Series_types_scatter_);
+;// ./code/es-modules/Series/Scatter/ScatterSeriesDefaults.js
+/* *
+ *
+ *  (c) 2010-2024 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+/**
+ * A scatter plot uses cartesian coordinates to display values for two
+ * variables for a set of data.
+ *
+ * @sample {highcharts} highcharts/demo/scatter/
+ *         Scatter plot
+ *
+ * @extends      plotOptions.line
+ * @excluding    cropThreshold, legendSymbolColor, pointPlacement, shadow,
+ *               useOhlcData
+ * @product      highcharts highstock
+ * @optionparent plotOptions.scatter
+ */
+const ScatterSeriesDefaults = {
+    /**
+     * The width of the line connecting the data points.
+     *
+     * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/
+     *         0 by default
+     * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/
+     *         1px
+     *
+     * @product highcharts highstock
+     */
+    lineWidth: 0,
+    findNearestPointBy: 'xy',
+    /**
+     * Apply a jitter effect for the rendered markers. When plotting
+     * discrete values, a little random noise may help telling the points
+     * apart. The jitter setting applies a random displacement of up to `n`
+     * axis units in either direction. So for example on a horizontal X
+     * axis, setting the `jitter.x` to 0.24 will render the point in a
+     * random position between 0.24 units to the left and 0.24 units to the
+     * right of the true axis position. On a category axis, setting it to
+     * 0.5 will fill up the bin and make the data appear continuous.
+     *
+     * When rendered on top of a box plot or a column series, a jitter value
+     * of 0.24 will correspond to the underlying series' default
+     * [groupPadding](
+     * https://api.highcharts.com/highcharts/plotOptions.column.groupPadding)
+     * and [pointPadding](
+     * https://api.highcharts.com/highcharts/plotOptions.column.pointPadding)
+     * settings.
+     *
+     * **Note:** With boost mode enabled, the jitter effect is not supported.
+     *
+     * @sample {highcharts} highcharts/demo/scatter-jitter
+     *         Jitter on a scatter plot
+     *
+     * @sample {highcharts} highcharts/series-scatter/jitter-boxplot
+     *         Jittered scatter plot on top of a box plot
+     *
+     * @product highcharts highstock
+     * @since 7.0.2
+     */
+    jitter: {
+        /**
+         * The maximal X offset for the random jitter effect.
+         */
+        x: 0,
+        /**
+         * The maximal Y offset for the random jitter effect.
+         */
+        y: 0
+    },
+    marker: {
+        enabled: true // Overrides auto-enabling in line series (#3647)
+    },
+    /**
+     * Sticky tracking of mouse events. When true, the `mouseOut` event
+     * on a series isn't triggered until the mouse moves over another
+     * series, or out of the plot area. When false, the `mouseOut` event on
+     * a series is triggered when the mouse leaves the area around the
+     * series' graph or markers. This also implies the tooltip. When
+     * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
+     * will be hidden when moving the mouse between series.
+     *
+     * @type      {boolean}
+     * @default   false
+     * @product   highcharts highstock highmaps
+     * @apioption plotOptions.scatter.stickyTracking
+     */
+    /**
+     * A configuration object for the tooltip rendering of each single
+     * series. Properties are inherited from [tooltip](#tooltip).
+     * Overridable properties are `headerFormat`, `pointFormat`,
+     * `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other
+     * series, in a scatter plot the series.name by default shows in the
+     * headerFormat and point.x and point.y in the pointFormat.
+     *
+     * @product highcharts highstock highmaps
+     */
+    tooltip: {
+        /**
+         * @product highcharts highstock
+         */
+        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '<span style="font-size: 0.8em"> {series.name}</span><br/>',
+        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+    }
+};
+/**
+ * A `scatter` series. If the [type](#series.scatter.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.scatter
+ * @excluding cropThreshold, dataParser, dataURL, useOhlcData
+ * @product   highcharts highstock
+ * @apioption series.scatter
+ */
+/**
+ * An array of data points for the series. For the `scatter` series
+ * type, points can be given in the following ways:
+ *
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `y` options. The `x` values will be automatically
+ *    calculated, either starting at 0 and incremented by 1, or from
+ *    `pointStart` and `pointInterval` given in the series options. If the axis
+ *    has categories, these will be used. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
+ *
+ * 2. An array of arrays with 2 values. In this case, the values correspond to
+ *    `x,y`. If the first value is a string, it is applied as the name of the
+ *    point, and the `x` value is inferred.
+ *    ```js
+ *    data: [
+ *        [0, 0],
+ *        [1, 8],
+ *        [2, 9]
+ *    ]
+ *    ```
+ *
+ * 3. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.scatter.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        y: 2,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        x: 1,
+ *        y: 4,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
+ *
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
+ * @apioption series.scatter.data
+ */
+''; // Keeps doclets above in JS file
+/* *
+ *
+ *  Default Export
+ *
+ * */
+/* harmony default export */ const Scatter_ScatterSeriesDefaults = (ScatterSeriesDefaults);
+
+;// ./code/es-modules/Series/Scatter/ScatterSeries.js
+/* *
+ *
+ *  (c) 2010-2024 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+
+
+const { column: ColumnSeries, line: LineSeries } = (highcharts_SeriesRegistry_commonjs_highcharts_SeriesRegistry_commonjs2_highcharts_SeriesRegistry_root_Highcharts_SeriesRegistry_default()).seriesTypes;
+
+const { addEvent: ScatterSeries_addEvent, extend: ScatterSeries_extend, merge: ScatterSeries_merge } = (highcharts_commonjs_highcharts_commonjs2_highcharts_root_Highcharts_default());
+/* *
+ *
+ *  Class
+ *
+ * */
+/**
+ * Scatter series type.
+ *
+ * @private
+ */
+class ScatterSeries extends LineSeries {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * Optionally add the jitter effect.
+     * @private
+     */
+    applyJitter() {
+        const series = this, jitter = this.options.jitter, len = this.points.length;
+        /**
+         * Return a repeatable, pseudo-random number based on an integer
+         * seed.
+         * @private
+         */
+        function unrandom(seed) {
+            const rand = Math.sin(seed) * 10000;
+            return rand - Math.floor(rand);
+        }
+        if (jitter) {
+            this.points.forEach(function (point, i) {
+                ['x', 'y'].forEach(function (dim, j) {
+                    if (jitter[dim] && !point.isNull) {
+                        const plotProp = `plot${dim.toUpperCase()}`, axis = series[`${dim}Axis`], translatedJitter = jitter[dim] *
+                            axis.transA;
+                        if (axis && !axis.logarithmic) {
+                            // Identify the outer bounds of the jitter range
+                            const min = Math.max(0, (point[plotProp] || 0) - translatedJitter), max = Math.min(axis.len, (point[plotProp] || 0) + translatedJitter);
+                            // Find a random position within this range
+                            point[plotProp] = min +
+                                (max - min) * unrandom(i + j * len);
+                            // Update clientX for the tooltip k-d-tree
+                            if (dim === 'x') {
+                                point.clientX = point.plotX;
+                            }
+                        }
+                    }
+                });
+            });
+        }
+    }
+    /**
+     * @private
+     */
+    drawGraph() {
+        if (this.options.lineWidth) {
+            super.drawGraph();
+        }
+        else if (this.graph) {
+            this.graph = this.graph.destroy();
+        }
+    }
+}
+/* *
+ *
+ *  Static Properties
+ *
+ * */
+ScatterSeries.defaultOptions = ScatterSeries_merge(LineSeries.defaultOptions, Scatter_ScatterSeriesDefaults);
+ScatterSeries_extend(ScatterSeries.prototype, {
+    drawTracker: ColumnSeries.prototype.drawTracker,
+    sorted: false,
+    requireSorting: false,
+    noSharedTooltip: true,
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
+});
+/* *
+ *
+ *  Events
+ *
+ * */
+/* eslint-disable no-invalid-this */
+ScatterSeries_addEvent(ScatterSeries, 'afterTranslate', function () {
+    this.applyJitter();
+});
+highcharts_SeriesRegistry_commonjs_highcharts_SeriesRegistry_commonjs2_highcharts_SeriesRegistry_root_Highcharts_SeriesRegistry_default().registerSeriesType('scatter', ScatterSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+/* harmony default export */ const Scatter_ScatterSeries = (ScatterSeries);
+
 ;// ./code/es-modules/Series/Scatter3D/Scatter3DPoint.js
 /* *
  *
@@ -4901,7 +5195,7 @@ var highcharts_Series_types_scatter_commonjs_highcharts_Series_types_scatter_com
  * */
 
 
-const { pointClass: ScatterPoint } = (highcharts_Series_types_scatter_commonjs_highcharts_Series_types_scatter_commonjs2_highcharts_Series_types_scatter_root_Highcharts_Series_types_scatter_default()).prototype;
+const { pointClass: ScatterPoint } = Scatter_ScatterSeries.prototype;
 
 const { defined: Scatter3DPoint_defined } = (highcharts_commonjs_highcharts_commonjs2_highcharts_root_Highcharts_default());
 /* *
@@ -5083,7 +5377,7 @@ const { extend: Scatter3DSeries_extend, merge: Scatter3DSeries_merge } = (highch
  *
  * @augments Highcharts.Series
  */
-class Scatter3DSeries extends (highcharts_Series_types_scatter_commonjs_highcharts_Series_types_scatter_commonjs2_highcharts_Series_types_scatter_root_Highcharts_Series_types_scatter_default()) {
+class Scatter3DSeries extends Scatter_ScatterSeries {
     /* *
      *
      *  Functions
@@ -5103,7 +5397,7 @@ class Scatter3DSeries extends (highcharts_Series_types_scatter_commonjs_highchar
  *  Static Properties
  *
  * */
-Scatter3DSeries.defaultOptions = Scatter3DSeries_merge((highcharts_Series_types_scatter_commonjs_highcharts_Series_types_scatter_commonjs2_highcharts_Series_types_scatter_root_Highcharts_Series_types_scatter_default()).defaultOptions, Scatter3D_Scatter3DSeriesDefaults);
+Scatter3DSeries.defaultOptions = Scatter3DSeries_merge(Scatter_ScatterSeries.defaultOptions, Scatter3D_Scatter3DSeriesDefaults);
 Scatter3DSeries_extend(Scatter3DSeries.prototype, {
     axisTypes: ['xAxis', 'yAxis', 'zAxis'],
     // Require direct touch rather than using the k-d-tree, because the

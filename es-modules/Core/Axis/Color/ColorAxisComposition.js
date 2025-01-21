@@ -96,7 +96,7 @@ var ColorAxisComposition;
         let colorAxisItems = [], options, i;
         colorAxes.forEach(function (colorAxis) {
             options = colorAxis.options;
-            if (options && options.showInLegend) {
+            if (options?.showInLegend) {
                 // Data classes
                 if (options.dataClasses && options.visible) {
                     colorAxisItems = colorAxisItems.concat(colorAxis.getDataClassLegendSymbols());
@@ -151,8 +151,7 @@ var ColorAxisComposition;
      * @private
      */
     function onSeriesAfterTranslate() {
-        if (this.chart.colorAxis &&
-            this.chart.colorAxis.length ||
+        if (this.chart.colorAxis?.length ||
             this.colorAttribs) {
             this.translateColors();
         }

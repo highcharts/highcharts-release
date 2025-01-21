@@ -14,7 +14,7 @@
  *
  * */
 const OfflineExportingDefaults = {
-    libURL: 'https://code.highcharts.com/@product.version@/lib/',
+    libURL: 'https://code.highcharts.com/12.1.2-modified/lib/',
     // When offline-exporting is loaded, redefine the menu item definitions
     // related to download.
     menuItemDefinitions: {

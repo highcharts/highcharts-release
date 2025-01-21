@@ -608,9 +608,6 @@ export default Breadcrumbs;
  *
  * @callback Highcharts.BreadcrumbsFormatterCallbackFunction
  *
- * @param {Highcharts.Event} event
- * Event.
- *
  * @param {Highcharts.BreadcrumbOptions} options
  * Breadcrumb options.
  *

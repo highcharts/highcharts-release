@@ -134,7 +134,7 @@ class LineSeries extends Series {
             const plotX = point.plotX, plotY = point.plotY, lastPoint = points[i - 1], isNull = point.isNull || typeof plotY !== 'number';
             // The path to this point from the previous
             let pathToPoint;
-            if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
+            if ((point.leftCliff || lastPoint?.rightCliff) &&
                 !connectCliffs) {
                 gap = true; // ... and continue
             }

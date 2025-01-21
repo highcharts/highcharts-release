@@ -38,7 +38,7 @@ function compose(AxisClass, TickClass) {
  */
 function onAxisAfterDrawCrosshair(e) {
     if (this.variwide && this.cross) {
-        this.cross.attr('stroke-width', (e.point && e.point.crosshairWidth));
+        this.cross.attr('stroke-width', e.point?.crosshairWidth);
     }
 }
 /**

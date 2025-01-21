@@ -69,7 +69,7 @@ function getForcedAxisOptions(type, chartOptions) {
     if (type === 'xAxis') {
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
-        const navigatorEnabled = pick(chartOptions.navigator && chartOptions.navigator.enabled, NavigatorDefaults.enabled, true);
+        const navigatorEnabled = pick(chartOptions.navigator?.enabled, NavigatorDefaults.enabled, true);
         const axisOptions = {
             type: 'datetime',
             categories: void 0
@@ -123,7 +123,7 @@ class StockChart extends Chart {
         const defaultOptions = getOptions(), xAxisOptions = userOptions.xAxis, yAxisOptions = userOptions.yAxis, 
         // Always disable startOnTick:true on the main axis when the
         // navigator is enabled (#1090)
-        navigatorEnabled = pick(userOptions.navigator && userOptions.navigator.enabled, NavigatorDefaults.enabled, true);
+        navigatorEnabled = pick(userOptions.navigator?.enabled, NavigatorDefaults.enabled, true);
         // Avoid doing these twice
         userOptions.xAxis = userOptions.yAxis = void 0;
         const options = merge({
@@ -154,7 +154,7 @@ class StockChart extends Chart {
                 text: null
             },
             tooltip: {
-                split: pick(defaultOptions.tooltip && defaultOptions.tooltip.split, true),
+                split: pick(defaultOptions.tooltip?.split, true),
                 crosshairs: true
             },
             legend: {
@@ -266,7 +266,7 @@ addEvent(Chart, 'update', function (e) {
         if (!crossLabel) {
             crossLabel = axis.crossLabel = chart.renderer
                 .label('', 0, void 0, options.shape || 'callout')
-                .addClass('highcharts-crosshair-label highcharts-color-' + (point && point.series ?
+                .addClass('highcharts-crosshair-label highcharts-color-' + (point?.series ?
                 point.series.colorIndex :
                 axis.series[0] && this.series[0].colorIndex))
                 .attr({
@@ -281,9 +281,7 @@ addEvent(Chart, 'update', function (e) {
                 crossLabel
                     .attr({
                     fill: options.backgroundColor ||
-                        ( // #14888
-                        point && point.series &&
-                            point.series.color) ||
+                        point?.series?.color || // #14888
                         "#666666" /* Palette.neutralColor60 */,
                     stroke: options.borderColor || '',
                     'stroke-width': options.borderWidth || 0
@@ -317,7 +315,7 @@ addEvent(Chart, 'update', function (e) {
             axis.toValue(horiz ? e.chartX : e.chartY);
         // Crosshair should be rendered within Axis range (#7219) and the point
         // of currentPriceIndicator should be inside the plot area (#14879).
-        const isInside = point && point.series ?
+        const isInside = point?.series ?
             point.series.isPointInside(point) :
             (isNumber(value) && value > min && value < max);
         let text = '';

@@ -93,7 +93,7 @@ class Tick {
      * @function Highcharts.Tick#addLabel
      */
     addLabel() {
-        const tick = this, axis = tick.axis, options = axis.options, chart = axis.chart, categories = axis.categories, log = axis.logarithmic, names = axis.names, pos = tick.pos, labelOptions = pick(tick.options && tick.options.labels, options.labels), tickPositions = axis.tickPositions, isFirst = pos === tickPositions[0], isLast = pos === tickPositions[tickPositions.length - 1], animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
+        const tick = this, axis = tick.axis, options = axis.options, chart = axis.chart, categories = axis.categories, log = axis.logarithmic, names = axis.names, pos = tick.pos, labelOptions = pick(tick.options?.labels, options.labels), tickPositions = axis.tickPositions, isFirst = pos === tickPositions[0], isLast = pos === tickPositions[tickPositions.length - 1], animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
             axis.tickInterval === 1, tickPositionInfo = tickPositions.info;
         let label = tick.label, dateTimeLabelFormat, dateTimeLabelFormats, i;
         // The context value
@@ -163,7 +163,7 @@ class Tick {
         };
         const str = labelFormatter.call(ctx, ctx);
         // Set up conditional formatting based on the format list if existing.
-        const list = dateTimeLabelFormats && dateTimeLabelFormats.list;
+        const list = dateTimeLabelFormats?.list;
         if (list) {
             tick.shortenLabel = function () {
                 for (i = 0; i < list.length; i++) {
@@ -413,7 +413,7 @@ class Tick {
             // need to set a new one because the reported labelWidth will be
             // limited by the box (#3938).
             if (labelWidth > modifiedSlotWidth ||
-                (axis.autoRotation && (label.styles || {}).width)) {
+                (axis.autoRotation && label?.styles?.width)) {
                 textWidth = modifiedSlotWidth;
             }
             // Add ellipsis to prevent rotated labels to be clipped against the edge
@@ -498,7 +498,7 @@ class Tick {
             (correctFloat(pxPos) < axisStart || pxPos > axisEnd)) {
             opacity = 0;
         }
-        const labelOpacity = pick(opacity, tick.label && tick.label.newOpacity, // #15528
+        const labelOpacity = pick(opacity, tick.label?.newOpacity, // #15528
         1);
         opacity = pick(opacity, 1);
         this.isActive = true;

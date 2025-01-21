@@ -380,7 +380,7 @@ class Pointer {
                 chartY: y + yAxis.pos
             };
         }
-        if (shapeArgs && shapeArgs.x && shapeArgs.y) {
+        if (shapeArgs?.x && shapeArgs.y) {
             // E.g. pies do not have axes
             return {
                 chartX: shapeArgs.x,
@@ -502,7 +502,7 @@ class Pointer {
             existingHoverPoint :
             this.findNearestKDPoint(searchSeries, shared, e);
         // Assign hover series
-        hoverSeries = hoverPoint && hoverPoint.series;
+        hoverSeries = hoverPoint?.series;
         // If we have a hoverPoint, assign hoverPoints.
         if (hoverPoint) {
             // When tooltip is shared, it displays more than one point
@@ -774,8 +774,7 @@ class Pointer {
             // If the tooltip has stickOnContact enabled, do nothing. This
             // applies regardless of any combinations of the `split` and
             // `useHTML` options.
-            !(tooltip &&
-                tooltip.shouldStickOnContact(pEvt))) {
+            !tooltip?.shouldStickOnContact(pEvt)) {
             if (this.inClass(pEvt.target, 'highcharts-no-tooltip')) {
                 this.reset(false, 0);
             }
@@ -833,8 +832,7 @@ class Pointer {
             !chart.isInsidePlot(pEvt.chartX - chart.plotLeft, pEvt.chartY - chart.plotTop, {
                 visiblePlotOnly: true
             }) &&
-            !(tooltip &&
-                tooltip.shouldStickOnContact(pEvt)) && (pEvt.target === chart.container.ownerDocument ||
+            !tooltip?.shouldStickOnContact(pEvt) && (pEvt.target === chart.container.ownerDocument ||
             !this.inClass(pEvt.target, 'highcharts-tracker'))) {
             this.reset();
         }
@@ -1077,7 +1075,7 @@ class Pointer {
      * @param {number} [delay]
      */
     reset(allowMove, delay) {
-        const pointer = this, chart = pointer.chart, hoverSeries = chart.hoverSeries, hoverPoint = chart.hoverPoint, hoverPoints = chart.hoverPoints, tooltip = chart.tooltip, tooltipPoints = tooltip && tooltip.shared ?
+        const pointer = this, chart = pointer.chart, hoverSeries = chart.hoverSeries, hoverPoint = chart.hoverPoint, hoverPoints = chart.hoverPoints, tooltip = chart.tooltip, tooltipPoints = tooltip?.shared ?
             hoverPoints :
             hoverPoint;
         // Check if the points have moved outside the plot area (#1003, #4736,
@@ -1157,20 +1155,19 @@ class Pointer {
      * @emits Highcharts.Point#event:mouseOver
      */
     runPointActions(e, p, force) {
-        const pointer = this, chart = pointer.chart, series = chart.series, tooltip = (chart.tooltip && chart.tooltip.options.enabled ?
+        const pointer = this, chart = pointer.chart, series = chart.series, tooltip = (chart.tooltip?.options.enabled ?
             chart.tooltip :
             void 0), shared = (tooltip ?
             tooltip.shared :
             false);
-        let hoverPoint = p || chart.hoverPoint, hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries;
+        let hoverPoint = p || chart.hoverPoint, hoverSeries = hoverPoint?.series || chart.hoverSeries;
         const // `onMouseOver` or already hovering a series with directTouch
-        isDirectTouch = (!e || e.type !== 'touchmove') && (!!p || ((hoverSeries && hoverSeries.directTouch) &&
+        isDirectTouch = (!e || e.type !== 'touchmove') && (!!p || ((hoverSeries?.directTouch) &&
             pointer.isDirectTouch)), hoverData = this.getHoverData(hoverPoint, hoverSeries, series, isDirectTouch, shared, e);
         // Update variables from hoverData.
         hoverPoint = hoverData.hoverPoint;
         hoverSeries = hoverData.hoverSeries;
-        const points = hoverData.hoverPoints, followPointer = hoverSeries &&
-            hoverSeries.tooltipOptions.followPointer &&
+        const points = hoverData.hoverPoints, followPointer = hoverSeries?.tooltipOptions.followPointer &&
             !hoverSeries.tooltipOptions.split, useSharedTooltip = (shared &&
             hoverSeries &&
             !hoverSeries.noSharedTooltip);
@@ -1179,7 +1176,7 @@ class Pointer {
         if (hoverPoint &&
             (force ||
                 hoverPoint !== chart.hoverPoint ||
-                (tooltip && tooltip.isHidden))) {
+                tooltip?.isHidden)) {
             (chart.hoverPoints || []).forEach(function (p) {
                 if (points.indexOf(p) === -1) {
                     p.setState();
@@ -1249,12 +1246,12 @@ class Pointer {
         }
         // Issues related to crosshair #4927, #5269 #5066, #5658
         chart.axes.forEach(function drawAxisCrosshair(axis) {
-            const snap = pick((axis.crosshair || {}).snap, true);
+            const snap = axis.crosshair?.snap ?? true;
             let point;
             if (snap) {
                 point = chart.hoverPoint; // #13002
                 if (!point || point.series[axis.coll] !== axis) {
-                    point = find(points, (p) => p.series && p.series[axis.coll] === axis);
+                    point = find(points, (p) => p.series?.[axis.coll] === axis);
                 }
             }
             // Axis has snapping crosshairs, and one of the hover points belongs
@@ -1369,8 +1366,7 @@ class Pointer {
             }
             hoverChart.pointer?.onContainerMouseLeave(e || relatedTargetObj);
         }
-        if (!hoverChart ||
-            !hoverChart.mouseIsDown) {
+        if (!hoverChart?.mouseIsDown) {
             Pointer.hoverChartIndex = chart.index;
         }
     }

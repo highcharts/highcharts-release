@@ -223,7 +223,7 @@ var SVGRenderer3D;
             return elementProto.attr.apply(this, arguments);
         };
         result.animate = function (params, duration, complete) {
-            if (params && params.faces) {
+            if (params?.faces) {
                 while (result.faces.length > params.faces.length) {
                     result.faces.pop().destroy();
                 }

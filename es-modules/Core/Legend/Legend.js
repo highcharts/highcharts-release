@@ -244,7 +244,7 @@ class Legend {
      */
     positionItem(item) {
         const legend = this, { group, x = 0, y = 0 } = item.legendItem || {}, options = legend.options, symbolPadding = options.symbolPadding, ltr = !options.rtl, checkbox = item.checkbox;
-        if (group && group.element) {
+        if (group?.element) {
             const attribs = {
                 translateX: ltr ?
                     x :
@@ -319,7 +319,7 @@ class Legend {
      * @function Highcharts.Legend#positionCheckboxes
      */
     positionCheckboxes() {
-        const alignAttr = this.group && this.group.alignAttr, clipHeight = this.clipHeight || this.legendHeight, titleHeight = this.titleHeight;
+        const alignAttr = this.group?.alignAttr, clipHeight = this.clipHeight || this.legendHeight, titleHeight = this.titleHeight;
         let translateY;
         if (alignAttr) {
             translateY = alignAttr.translateY;
@@ -485,7 +485,7 @@ class Legend {
         legend.setText(item);
         // Calculate the positions for the next line
         const bBox = label.getBBox();
-        const fontMetricsH = (legend.fontMetrics && legend.fontMetrics.h) || 0;
+        const fontMetricsH = legend.fontMetrics?.h || 0;
         item.itemWidth = item.checkboxOffset =
             options.itemWidth ||
                 legendItem.labelWidth ||
@@ -556,13 +556,13 @@ class Legend {
     getAllItems() {
         let allItems = [];
         this.chart.series.forEach(function (series) {
-            const seriesOptions = series && series.options;
+            const seriesOptions = series?.options;
             // Handle showInLegend. If the series is linked to another series,
             // defaults to false.
             if (series && pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? void 0 : false, true)) {
                 // Use points or series for the legend item depending on
                 // legendType
-                allItems = allItems.concat((series.legendItem || {}).labels ||
+                allItems = allItems.concat(series.legendItem?.labels ||
                     (seriesOptions.legendType === 'point' ?
                         series.data :
                         series));
@@ -716,8 +716,8 @@ class Legend {
         }
         legend.renderTitle();
         // Sort by legendIndex
-        stableSort(allItems, (a, b) => ((a.options && a.options.legendIndex) || 0) -
-            ((b.options && b.options.legendIndex) || 0));
+        stableSort(allItems, (a, b) => (a.options?.legendIndex || 0) -
+            (b.options?.legendIndex || 0));
         // Reversed legend
         if (options.reversed) {
             allItems.reverse();
@@ -866,7 +866,7 @@ class Legend {
             }
             return legend[key];
         };
-        let clipHeight, lastY, legendItem, spaceHeight = (chart.spacingBox.height +
+        let clipHeight, lastY, legendItem, lastLegendItem, spaceHeight = (chart.spacingBox.height +
             (alignTop ? -optionsY : optionsY) - padding), nav = this.nav, clipRect = this.clipRect;
         // Adjust the height
         if (options.layout === 'horizontal' &&
@@ -900,8 +900,8 @@ class Legend {
                 }
                 // Keep track of which page each item is on
                 legendItem.pageIx = len - 1;
-                if (lastY) {
-                    (allItems[i - 1].legendItem || {}).pageIx = len - 1;
+                if (lastY && lastLegendItem) {
+                    lastLegendItem.pageIx = len - 1;
                 }
                 // Add the last page if needed (#2617, #13683)
                 if (
@@ -916,6 +916,7 @@ class Legend {
                 if (y !== lastY) {
                     lastY = y;
                 }
+                lastLegendItem = legendItem;
             });
             // Only apply clipping if needed. Clipping causes blurred legend in
             // PDF export (#1787)

@@ -31,12 +31,12 @@ function chartGetStacks() {
     const chart = this, inverted = chart.inverted;
     // Reset stacks for each axis
     chart.axes.forEach((axis) => {
-        if (axis.stacking && axis.stacking.stacks && axis.hasVisibleSeries) {
+        if (axis.stacking?.stacks && axis.hasVisibleSeries) {
             axis.stacking.oldStacks = axis.stacking.stacks;
         }
     });
     chart.series.forEach((series) => {
-        const xAxisOptions = series.xAxis && series.xAxis.options || {};
+        const xAxisOptions = series.xAxis?.options || {};
         if (series.options.stacking && series.reserveSpace()) {
             series.stackKey = [
                 series.type,

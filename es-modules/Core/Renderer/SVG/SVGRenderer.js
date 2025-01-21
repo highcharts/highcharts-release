@@ -169,7 +169,7 @@ class SVGRenderer {
         this.url = this.getReferenceURL();
         // Add description
         const desc = this.createElement('desc').add();
-        desc.element.appendChild(doc.createTextNode('Created with @product.name@ @product.version@'));
+        desc.element.appendChild(doc.createTextNode('Created with Highcharts 12.1.2-modified'));
         this.defs = this.createElement('defs').add();
         this.allowHTML = allowHTML;
         this.forExport = forExport;
@@ -300,7 +300,7 @@ class SVGRenderer {
                     zIndex: 9e5
                 });
                 const hitElement = doc.elementFromPoint(6, 6);
-                hasInternalReferenceBug = (hitElement && hitElement.id) === 'hitme';
+                hasInternalReferenceBug = hitElement?.id === 'hitme';
                 doc.body.removeChild(svg);
             }
             if (hasInternalReferenceBug) {
@@ -1083,8 +1083,8 @@ class SVGRenderer {
             // The image width is not always the same as the symbol width. The
             // image may be centered within the symbol, as is the case when
             // image shapes are used as label backgrounds, for example in flags.
-            img.imgwidth = pick(options && options.width, symbolSizes[imageSrc] && symbolSizes[imageSrc].width);
-            img.imgheight = pick(options && options.height, symbolSizes[imageSrc] && symbolSizes[imageSrc].height);
+            img.imgwidth = pick(options?.width, symbolSizes[imageSrc]?.width);
+            img.imgheight = pick(options?.height, symbolSizes[imageSrc]?.height);
             /**
              * Set the size and position
              */

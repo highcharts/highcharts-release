@@ -1,5 +1,5 @@
 /**
- * @license Highstock JS v12.1.2 (2024-12-21)
+ * @license Highstock JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/price-indicator
  * @requires highcharts
  * @requires highcharts/modules/stock
@@ -219,6 +219,36 @@ const PriceIndication = {
  * @apioption plotOptions.series.lastVisiblePrice
  */
 /**
+ * The color of the line of last visible price.
+ * By default, color is not applied and the line is not visible.
+ *
+ * @type      {string}
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.color
+ *
+ */
+/**
+ * Name of the dash style to use for the line of last visible price.
+ *
+ * @sample {highstock} highcharts/plotoptions/series-dashstyle-all/
+ *         Possible values demonstrated
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @product   highstock
+ * @default   Solid
+ * @apioption plotOptions.series.lastVisiblePrice.dashStyle
+ *
+ */
+/**
+ * Width of the last visible price line.
+ *
+ * @type      {number}
+ * @product   highstock
+ * @default   1
+ * @apioption plotOptions.series.lastVisiblePrice.width
+ *
+ */
+/**
  * Enable or disable the indicator.
  *
  * @type      {boolean}
@@ -423,6 +453,27 @@ const PriceIndication = {
  * @type      {string}
  * @product   highstock
  * @apioption plotOptions.series.lastPrice.color
+ *
+ */
+/**
+ * Name of the dash style to use for the line of last price.
+ *
+ * @sample {highstock} highcharts/plotoptions/series-dashstyle-all/
+ *         Possible values demonstrated
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @product   highstock
+ * @default   Solid
+ * @apioption plotOptions.series.lastPrice.dashStyle
+ *
+ */
+/**
+ * Width of the last price line.
+ *
+ * @type      {number}
+ * @product   highstock
+ * @default   1
+ * @apioption plotOptions.series.lastPrice.width
  *
  */
 ''; // Keeps doclets above in JS file

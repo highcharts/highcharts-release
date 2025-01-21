@@ -103,7 +103,7 @@ var RadialAxis;
                 this.options.labels &&
                 this.options.labels.allowOverlap !== true) {
                 return this.tickPositions
-                    .map((pos) => this.ticks[pos] && this.ticks[pos].label)
+                    .map((pos) => this.ticks[pos]?.label)
                     .filter((label) => Boolean(label));
             }
         };
@@ -469,7 +469,7 @@ var RadialAxis;
      * Finalize modification of axis instance with radial logic.
      */
     function onAxisAfterInit() {
-        const chart = this.chart, options = this.options, isHidden = chart.angular && this.isXAxis, pane = this.pane, paneOptions = pane && pane.options;
+        const chart = this.chart, options = this.options, isHidden = chart.angular && this.isXAxis, pane = this.pane, paneOptions = pane?.options;
         if (!isHidden && pane && (chart.angular || chart.polar)) {
             const fullCircle = Math.PI * 2, 
             // Start and end angle options are given in degrees relative to
@@ -512,8 +512,7 @@ var RadialAxis;
      * Remove label collector function on axis remove/update.
      */
     function onAxisDestroy() {
-        if (this.chart &&
-            this.chart.labelCollectors) {
+        if (this.chart?.labelCollectors) {
             const index = (this.labelCollector ?
                 this.chart.labelCollectors.indexOf(this.labelCollector) :
                 -1);

@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/highcharts
  *
  * (c) 2009-2024 Torstein Honsi
@@ -74,12 +74,10 @@ var Globals;
      *  Constants
      *
      * */
-    Globals.SVG_NS = 'http://www.w3.org/2000/svg', Globals.product = 'Highcharts', Globals.version = '12.1.2', Globals.win = (typeof window !== 'undefined' ?
+    Globals.SVG_NS = 'http://www.w3.org/2000/svg', Globals.product = 'Highcharts', Globals.version = '12.1.2-modified', Globals.win = (typeof window !== 'undefined' ?
         window :
         {}), // eslint-disable-line node/no-unsupported-features/es-builtins
-    Globals.doc = Globals.win.document, Globals.svg = (Globals.doc &&
-        Globals.doc.createElementNS &&
-        !!Globals.doc.createElementNS(Globals.SVG_NS, 'svg').createSVGRect), Globals.pageLang = Globals.doc?.documentElement?.closest('[lang]')?.lang, Globals.userAgent = (Globals.win.navigator && Globals.win.navigator.userAgent) || '', Globals.isChrome = Globals.win.chrome, Globals.isFirefox = Globals.userAgent.indexOf('Firefox') !== -1, Globals.isMS = /(edge|msie|trident)/i.test(Globals.userAgent) && !Globals.win.opera, Globals.isSafari = !Globals.isChrome && Globals.userAgent.indexOf('Safari') !== -1, Globals.isTouchDevice = /(Mobile|Android|Windows Phone)/.test(Globals.userAgent), Globals.isWebKit = Globals.userAgent.indexOf('AppleWebKit') !== -1, Globals.deg2rad = Math.PI * 2 / 360, Globals.marginNames = [
+    Globals.doc = Globals.win.document, Globals.svg = !!Globals.doc?.createElementNS?.(Globals.SVG_NS, 'svg')?.createSVGRect, Globals.pageLang = Globals.doc?.documentElement?.closest('[lang]')?.lang, Globals.userAgent = Globals.win.navigator?.userAgent || '', Globals.isChrome = Globals.win.chrome, Globals.isFirefox = Globals.userAgent.indexOf('Firefox') !== -1, Globals.isMS = /(edge|msie|trident)/i.test(Globals.userAgent) && !Globals.win.opera, Globals.isSafari = !Globals.isChrome && Globals.userAgent.indexOf('Safari') !== -1, Globals.isTouchDevice = /(Mobile|Android|Windows Phone)/.test(Globals.userAgent), Globals.isWebKit = Globals.userAgent.indexOf('AppleWebKit') !== -1, Globals.deg2rad = Math.PI * 2 / 360, Globals.marginNames = [
         'plotTop',
         'marginRight',
         'marginBottom',
@@ -508,10 +506,10 @@ function isDOMElement(obj) {
  *         True if the argument is a class.
  */
 function isClass(obj) {
-    const c = obj && obj.constructor;
+    const c = obj?.constructor;
     return !!(isObject(obj, true) &&
         !isDOMElement(obj) &&
-        (c && c.name && c.name !== 'Object'));
+        (c?.name && c.name !== 'Object'));
 }
 /**
  * Utility function to check if an item is a number and it is finite (not NaN,
@@ -1149,9 +1147,7 @@ function destroyObjectProperties(obj, except, destructablesOnly) {
  *        The HTML node to discard.
  */
 function discardElement(element) {
-    if (element && element.parentElement) {
-        element.parentElement.removeChild(element);
-    }
+    element?.parentElement?.removeChild(element);
 }
 /**
  * Fix JS round off float errors.
@@ -1314,8 +1310,7 @@ function getStyle(el, prop, toInt) {
         let offsetWidth = Math.min(el.offsetWidth, el.scrollWidth);
         // In flex boxes, we need to use getBoundingClientRect and floor it,
         // because scrollWidth doesn't support subpixel precision (#6427) ...
-        const boundingClientRectWidth = el.getBoundingClientRect &&
-            el.getBoundingClientRect().width;
+        const boundingClientRectWidth = el.getBoundingClientRect?.().width;
         // ...unless if the containing div or its parents are transform-scaled
         // down, in which case the boundingClientRect can't be used as it is
         // also scaled down (#9871, #10498).
@@ -3584,7 +3579,7 @@ class Time {
      *  Constructors
      *
      * */
-    constructor(options) {
+    constructor(options, lang) {
         /* *
          *
          *  Properties
@@ -3596,6 +3591,7 @@ class Time {
         this.variableTimezone = false;
         this.Date = Time_win.Date;
         this.update(options);
+        this.lang = lang;
     }
     /* *
      *
@@ -3981,7 +3977,7 @@ class Time {
      *         The formatted date.
      */
     dateFormat(format, timestamp, upperCaseFirst) {
-        const lang = Core_Globals.defaultOptions?.lang;
+        const lang = this.lang;
         if (!Time_defined(timestamp) || isNaN(timestamp)) {
             return lang?.invalidDate || '';
         }
@@ -3991,7 +3987,7 @@ class Time {
             const localeAwareRegex = /%\[([a-zA-Z]+)\]/g;
             let match;
             while ((match = localeAwareRegex.exec(format))) {
-                format = format.replace(match[0], this.dateTimeFormat(match[1], timestamp));
+                format = format.replace(match[0], this.dateTimeFormat(match[1], timestamp, lang?.locale));
             }
         }
         // Then, replace static formats like %Y, %m, %d etc.
@@ -4273,14 +4269,15 @@ class Time {
         for (n in Time_timeUnits) { // eslint-disable-line guard-for-in
             // If the range is exactly one week and we're looking at a
             // Sunday/Monday, go for the week format
-            if (range === Time_timeUnits.week &&
+            if (range &&
+                range === Time_timeUnits.week &&
                 +this.dateFormat('%w', timestamp) === startOfWeek &&
                 dateStr.substr(6) === blank.substr(6)) {
                 n = 'week';
                 break;
             }
             // The first format that is too great for the range
-            if (Time_timeUnits[n] > range) {
+            if (range && Time_timeUnits[n] > range) {
                 n = lastN;
                 break;
             }
@@ -4541,6 +4538,8 @@ const defaultOptions = {
      *     }
      * });
      * ```
+     *
+     * @optionparent lang
      */
     lang: {
         /**
@@ -4698,9 +4697,8 @@ const defaultOptions = {
         resetZoomTitle: 'Reset zoom level 1:1'
     },
     /**
-     * Global options that don't apply to each chart. These options, like
-     * the `lang` options, must be set using the `Highcharts.setOptions`
-     * method.
+     * Global options that don't apply to each chart. These options must be set
+     * using the `Highcharts.setOptions` method.
      *
      * ```js
      * Highcharts.setOptions({
@@ -7074,7 +7072,7 @@ const defaultOptions = {
         text: 'Highcharts.com'
     }
 };
-const defaultTime = new Core_Time(defaultOptions.time);
+const defaultTime = new Core_Time(defaultOptions.time, defaultOptions.lang);
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
  * for outside modules wasn't enough because the setOptions method created a new
@@ -7733,7 +7731,7 @@ class Fx {
      *
      */
     dSetter() {
-        const paths = this.paths, start = paths && paths[0], end = paths && paths[1], now = this.now || 0;
+        const paths = this.paths, start = paths?.[0], end = paths?.[1], now = this.now || 0;
         let path = [];
         // Land on the final path without adjustment points appended in the ends
         if (now === 1 || !start || !end) {
@@ -7915,7 +7913,7 @@ class Fx {
         isArea = elem.isArea, positionFactor = isArea ? 2 : 1, disableAnimation = fromD &&
             toD.length > fromD.length &&
             toD.hasStackedCliffs; // #16925
-        let shift, fullLength, i, reverse, start = fromD && fromD.slice(); // Copy
+        let shift, fullLength, i, reverse, start = fromD?.slice(); // Copy
         if (!start || disableAnimation) {
             return [end, end];
         }
@@ -8943,18 +8941,18 @@ function dateFormat(format, timestamp, upperCaseFirst) {
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param {Highcharts.Chart} [chart]
- *        A `Chart` instance used to get numberFormatter and time.
+ * @param {Highcharts.Chart} [owner]
+ *        A `Chart` or `DataGrid` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted string.
  */
-function format(str = '', ctx, chart) {
+function format(str = '', ctx, owner) {
     const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/gu, 
     // The sub expression regex is the same as the top expression regex,
     // but except parens and block helpers (#), and surrounded by parens
     // instead of curly brackets.
-    subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/gu, matches = [], floatRegex = /f$/, decRegex = /\.(\d)/, lang = chart?.options.lang || Templating_defaultOptions.lang, time = chart && chart.time || Templating_defaultTime, numberFormatter = chart && chart.numberFormatter || numberFormat;
+    subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/gu, matches = [], floatRegex = /f$/, decRegex = /\.(\d)/, lang = owner?.options?.lang || Templating_defaultOptions.lang, time = owner?.time || Templating_defaultTime, numberFormatter = owner?.numberFormatter || numberFormat;
     /*
      * Get a literal or variable value inside a template expression. May be
      * extended with other types like string or null if needed, but keep it
@@ -8988,7 +8986,7 @@ function format(str = '', ctx, chart) {
             match = subMatch;
             hasSub = true;
         }
-        if (!currentMatch || !currentMatch.isBlock) {
+        if (!currentMatch?.isBlock) {
             currentMatch = {
                 ctx,
                 expression: match[1],
@@ -9080,7 +9078,7 @@ function format(str = '', ctx, chart) {
             // Block helpers may return true or false. They may also return a
             // string, like the `each` helper.
             if (match.isBlock && typeof replacement === 'boolean') {
-                replacement = format(replacement ? body : elseBody, ctx, chart);
+                replacement = format(replacement ? body : elseBody, ctx, owner);
             }
             // Simple variable replacement
         }
@@ -9110,7 +9108,7 @@ function format(str = '', ctx, chart) {
         }
         str = str.replace(match.find, Templating_pick(replacement, ''));
     });
-    return hasSub ? format(str, ctx, chart) : str;
+    return hasSub ? format(str, ctx, owner) : str;
 }
 /**
  * Format a number and return a string based on input settings.
@@ -10256,8 +10254,8 @@ class SVGElement {
         if (strokeWidth === 'inherit') {
             strokeWidth = 1;
         }
-        value = value && value.toLowerCase();
         if (value) {
+            value = value.toLowerCase();
             const v = value
                 .replace('shortdashdotdot', '3,1,1,1,1,1,')
                 .replace('shortdashdot', '3,1,1,1')
@@ -10316,8 +10314,7 @@ class SVGElement {
         wrapper.safeRemoveChild(element);
         // In case of useHTML, clean up empty containers emulating SVG groups
         // (#1960, #2393, #2697).
-        while (parentToClean &&
-            parentToClean.div &&
+        while (parentToClean?.div &&
             parentToClean.div.childNodes.length === 0) {
             grandParent = parentToClean.parentGroup;
             wrapper.safeRemoveChild(parentToClean.div);
@@ -10356,7 +10353,7 @@ class SVGElement {
             }
             this.pathArray = value;
             value = value.reduce((acc, seg, i) => {
-                if (!seg || !seg.join) {
+                if (!seg?.join) {
                     return (seg || '').toString();
                 }
                 return (i ? acc + ' ' : '') + seg.join(' ');
@@ -10797,11 +10794,11 @@ class SVGElement {
      */
     setRadialReference(coordinates) {
         const existingGradient = (this.element.gradient &&
-            this.renderer.gradients[this.element.gradient]);
+            this.renderer.gradients[this.element.gradient]) || void 0;
         this.element.radialReference = coordinates;
         // On redrawing objects with an existing gradient, the gradient needs
         // to be repositioned (#3801)
-        if (existingGradient && existingGradient.radAttr) {
+        if (existingGradient?.radAttr) {
             existingGradient.animate(this.renderer.getRadialAttr(coordinates, existingGradient.radAttr));
         }
         return this;
@@ -11853,7 +11850,7 @@ function arc(cx, cy, w, h, options) {
  * Callout shape used for default tooltips.
  */
 function callout(x, y, w, h, options) {
-    const arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX, anchorY = options && options.anchorY || 0;
+    const arrowLength = 6, halfDistance = 6, r = Math.min((options?.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options?.anchorX, anchorY = options?.anchorY || 0;
     const path = roundedRect(x, y, w, h, { r });
     if (!Symbols_isNumber(anchorX)) {
         return path;
@@ -11938,7 +11935,7 @@ function diamond(x, y, w, h) {
  *
  */
 function rect(x, y, w, h, options) {
-    if (options && options.r) {
+    if (options?.r) {
         return roundedRect(x, y, w, h, options);
     }
     return [
@@ -12042,11 +12039,11 @@ class TextBuilder {
         this.renderer = svgElement.renderer;
         this.svgElement = svgElement;
         this.width = svgElement.textWidth;
-        this.textLineHeight = textStyles && textStyles.lineHeight;
-        this.textOutline = textStyles && textStyles.textOutline;
-        this.ellipsis = Boolean(textStyles && textStyles.textOverflow === 'ellipsis');
+        this.textLineHeight = textStyles?.lineHeight;
+        this.textOutline = textStyles?.textOutline;
+        this.ellipsis = Boolean(textStyles?.textOverflow === 'ellipsis');
         this.lineClamp = textStyles?.lineClamp;
-        this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
+        this.noWrap = Boolean(textStyles?.whiteSpace === 'nowrap');
     }
     /**
      * Build an SVG representation of the pseudo HTML given in the object's
@@ -12313,7 +12310,7 @@ class TextBuilder {
                 }
             }
             // Modify styling
-            if (style && style.color) {
+            if (style?.color) {
                 style.fill = style.color;
             }
             // Handle breaks
@@ -12322,7 +12319,7 @@ class TextBuilder {
                 node.textContent = '\u200B'; // Zero-width space
                 // Trim whitespace off the beginning of new lines
                 const nextNode = nodes[i + 1];
-                if (nextNode && nextNode.textContent) {
+                if (nextNode?.textContent) {
                     nextNode.textContent =
                         nextNode.textContent.replace(/^ +/gm, '');
                 }
@@ -12638,7 +12635,7 @@ class SVGRenderer {
         this.url = this.getReferenceURL();
         // Add description
         const desc = this.createElement('desc').add();
-        desc.element.appendChild(SVGRenderer_doc.createTextNode('Created with Highcharts 12.1.2'));
+        desc.element.appendChild(SVGRenderer_doc.createTextNode('Created with Highcharts 12.1.2-modified'));
         this.defs = this.createElement('defs').add();
         this.allowHTML = allowHTML;
         this.forExport = forExport;
@@ -12769,7 +12766,7 @@ class SVGRenderer {
                     zIndex: 9e5
                 });
                 const hitElement = SVGRenderer_doc.elementFromPoint(6, 6);
-                hasInternalReferenceBug = (hitElement && hitElement.id) === 'hitme';
+                hasInternalReferenceBug = hitElement?.id === 'hitme';
                 SVGRenderer_doc.body.removeChild(svg);
             }
             if (hasInternalReferenceBug) {
@@ -13552,8 +13549,8 @@ class SVGRenderer {
             // The image width is not always the same as the symbol width. The
             // image may be centered within the symbol, as is the case when
             // image shapes are used as label backgrounds, for example in flags.
-            img.imgwidth = SVGRenderer_pick(options && options.width, symbolSizes[imageSrc] && symbolSizes[imageSrc].width);
-            img.imgheight = SVGRenderer_pick(options && options.height, symbolSizes[imageSrc] && symbolSizes[imageSrc].height);
+            img.imgwidth = SVGRenderer_pick(options?.width, symbolSizes[imageSrc]?.width);
+            img.imgheight = SVGRenderer_pick(options?.height, symbolSizes[imageSrc]?.height);
             /**
              * Set the size and position
              */
@@ -17973,7 +17970,7 @@ class Tick {
      * @function Highcharts.Tick#addLabel
      */
     addLabel() {
-        const tick = this, axis = tick.axis, options = axis.options, chart = axis.chart, categories = axis.categories, log = axis.logarithmic, names = axis.names, pos = tick.pos, labelOptions = Tick_pick(tick.options && tick.options.labels, options.labels), tickPositions = axis.tickPositions, isFirst = pos === tickPositions[0], isLast = pos === tickPositions[tickPositions.length - 1], animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
+        const tick = this, axis = tick.axis, options = axis.options, chart = axis.chart, categories = axis.categories, log = axis.logarithmic, names = axis.names, pos = tick.pos, labelOptions = Tick_pick(tick.options?.labels, options.labels), tickPositions = axis.tickPositions, isFirst = pos === tickPositions[0], isLast = pos === tickPositions[tickPositions.length - 1], animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
             axis.tickInterval === 1, tickPositionInfo = tickPositions.info;
         let label = tick.label, dateTimeLabelFormat, dateTimeLabelFormats, i;
         // The context value
@@ -18043,7 +18040,7 @@ class Tick {
         };
         const str = labelFormatter.call(ctx, ctx);
         // Set up conditional formatting based on the format list if existing.
-        const list = dateTimeLabelFormats && dateTimeLabelFormats.list;
+        const list = dateTimeLabelFormats?.list;
         if (list) {
             tick.shortenLabel = function () {
                 for (i = 0; i < list.length; i++) {
@@ -18293,7 +18290,7 @@ class Tick {
             // need to set a new one because the reported labelWidth will be
             // limited by the box (#3938).
             if (labelWidth > modifiedSlotWidth ||
-                (axis.autoRotation && (label.styles || {}).width)) {
+                (axis.autoRotation && label?.styles?.width)) {
                 textWidth = modifiedSlotWidth;
             }
             // Add ellipsis to prevent rotated labels to be clipped against the edge
@@ -18378,7 +18375,7 @@ class Tick {
             (Tick_correctFloat(pxPos) < axisStart || pxPos > axisEnd)) {
             opacity = 0;
         }
-        const labelOpacity = Tick_pick(opacity, tick.label && tick.label.newOpacity, // #15528
+        const labelOpacity = Tick_pick(opacity, tick.label?.newOpacity, // #15528
         1);
         opacity = Tick_pick(opacity, 1);
         this.isActive = true;
@@ -18955,7 +18952,7 @@ class Axis {
         numericSymbolDetector = axis.logarithmic ?
             Math.abs(value) :
             axis.tickInterval;
-        let i = numericSymbols && numericSymbols.length, multi, ret;
+        let i = numericSymbols?.length, multi, ret;
         if (categories) {
             ret = `${this.value}`;
         }
@@ -19627,7 +19624,7 @@ class Axis {
                 });
             }
             // Record minPointOffset and pointRangePadding
-            ordinalCorrection = (axis.ordinal && axis.ordinal.slope && closestPointRange) ?
+            ordinalCorrection = (axis.ordinal?.slope && closestPointRange) ?
                 axis.ordinal.slope / closestPointRange :
                 1; // #988, #1853
             axis.minPointOffset = minPointOffset =
@@ -19640,7 +19637,7 @@ class Axis {
             // The `closestPointRange` is the closest distance between points.
             // In columns it is mostly equal to pointRange, but in lines
             // pointRange is 0 while closestPointRange is some other value
-            if (isXAxis && closestPointRange) {
+            if (isXAxis) {
                 axis.closestPointRange = closestPointRange;
             }
         }
@@ -19870,7 +19867,9 @@ class Axis {
         dateTime &&
             !axis.series.some((s) => !s.sorted) ?
             axis.closestPointRange : 0);
-        if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
+        if (!tickIntervalOption &&
+            minTickInterval &&
+            axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
         }
         // For linear axes, normalize the interval
@@ -20028,7 +20027,10 @@ class Axis {
     trimTicks(tickPositions, startOnTick, endOnTick) {
         const roundedMin = tickPositions[0], roundedMax = tickPositions[tickPositions.length - 1], minPointOffset = (!this.isOrdinal && this.minPointOffset) || 0; // (#12716)
         Axis_fireEvent(this, 'trimTicks');
-        if (!this.isLinked) {
+        if (!this.isLinked ||
+            // Linked non-grid axes should trim ticks, #21743.
+            // Grid axis has custom handling of ticks.
+            !this.grid) {
             if (startOnTick && roundedMin !== -Infinity) { // #6502
                 this.min = roundedMin;
             }
@@ -20302,20 +20304,20 @@ class Axis {
             // When x axis is dirty, we need new data extremes for y as
             // well:
             isXAxisDirty = (isXAxisDirty ||
-                (series.xAxis && series.xAxis.isDirty) ||
+                series.xAxis?.isDirty ||
                 false);
         });
         // Set the new axisLength
         axis.setAxisSize();
-        const isDirtyAxisLength = axis.len !== (axis.old && axis.old.len);
+        const isDirtyAxisLength = axis.len !== axis.old?.len;
         // Do we really need to go through all this?
         if (isDirtyAxisLength ||
             isDirtyData ||
             isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
-            axis.userMin !== (axis.old && axis.old.userMin) ||
-            axis.userMax !== (axis.old && axis.old.userMax) ||
+            axis.userMin !== axis.old?.userMin ||
+            axis.userMax !== axis.old?.userMax ||
             axis.alignToOthers()) {
             if (stacking && coll === 'yAxis') {
                 stacking.buildStacks();
@@ -20730,7 +20732,7 @@ class Axis {
         }
         // Apply general and specific CSS
         tickPositions.forEach(function (pos) {
-            const tick = ticks[pos], label = tick && tick.label, widthOption = labelStyleOptions.width, css = {};
+            const tick = ticks[pos], label = tick?.label, widthOption = labelStyleOptions.width, css = {};
             if (label) {
                 // This needs to go before the CSS in old IE (#4502)
                 label.attr(attr);
@@ -20967,7 +20969,7 @@ class Axis {
             const tickSize = this.tickSize('tick');
             axisOffset[side] = Math.max(axisOffset[side], (axis.axisTitleMargin || 0) + titleOffset +
                 directionFactor * axis.offset, labelOffsetPadded, // #3027
-            tickPositions && tickPositions.length && tickSize ?
+            tickPositions?.length && tickSize ?
                 tickSize[0] + directionFactor * axis.offset :
                 0 // #4866
             );
@@ -21128,7 +21130,7 @@ class Axis {
         // Linked axes need an extra check to find out if
         if (!isLinked ||
             (pos >= axis.min && pos <= axis.max) ||
-            (axis.grid && axis.grid.isColumn)) {
+            axis.grid?.isColumn) {
             if (!ticks[pos]) {
                 ticks[pos] = new Axis_Tick(axis, pos);
             }
@@ -21283,7 +21285,7 @@ class Axis {
             axisTitle.isNew = false;
         }
         // Stacked totals:
-        if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {
+        if (stackLabelOptions?.enabled && axis.stacking) {
             axis.stacking.renderStackTotals();
         }
         // End stacked totals
@@ -21396,13 +21398,13 @@ class Axis {
      * @emits Highcharts.Axis#event:drawCrosshair
      */
     drawCrosshair(e, point) {
-        const options = this.crosshair, snap = Axis_pick(options && options.snap, true), chart = this.chart;
+        const options = this.crosshair, snap = options?.snap ?? true, chart = this.chart;
         let path, pos, categorized, graphic = this.cross, crossOptions;
         Axis_fireEvent(this, 'drawCrosshair', { e: e, point: point });
         // Use last available event when updating non-snapped crosshairs without
         // mouse interaction (#5287)
         if (!e) {
-            e = this.cross && this.cross.e;
+            e = this.cross?.e;
         }
         if (
         // Disabled in options
@@ -21440,8 +21442,8 @@ class Axis {
                     // polar chart
                     Axis_extend(crossOptions, {
                         isCrosshair: true,
-                        chartX: e && e.chartX,
-                        chartY: e && e.chartY,
+                        chartX: e?.chartX,
+                        chartY: e?.chartY,
                         point: point
                     });
                 }
@@ -22470,7 +22472,7 @@ var PlotLineOrBandAxis;
             ]).forEach(function (arr) {
                 i = arr.length;
                 while (i--) {
-                    if ((arr[i] || {}).id === id) {
+                    if (arr[i]?.id === id) {
                         PlotLineOrBandAxis_erase(arr, arr[i]);
                     }
                 }
@@ -23544,7 +23546,7 @@ class Tooltip {
      */
     cleanSplit(force) {
         this.chart.series.forEach(function (series) {
-            const tt = series && series.tt;
+            const tt = series?.tt;
             if (tt) {
                 if (!tt.isActive || force) {
                     series.tt = tt.destroy();
@@ -23613,8 +23615,7 @@ class Tooltip {
         points = Tooltip_splat(points);
         // If reversedStacks are false the tooltip position should be taken from
         // the last point (#17948)
-        if (points[0].series &&
-            points[0].series.yAxis &&
+        if (points[0].series?.yAxis &&
             !points[0].series.yAxis.options.reversedStacks) {
             points = points.slice().reverse();
         }
@@ -23676,7 +23677,7 @@ class Tooltip {
             isHeader && 'highcharts-tooltip-header',
             isSplit ? 'highcharts-tooltip-box' : 'highcharts-tooltip',
             !isHeader && 'highcharts-color-' + Tooltip_pick(point.colorIndex, series.colorIndex),
-            (seriesOptions && seriesOptions.className)
+            seriesOptions?.className
         ].filter(Tooltip_isString).join(' ');
     }
     /**
@@ -23719,7 +23720,7 @@ class Tooltip {
                     position: 'absolute',
                     top: '1px',
                     pointerEvents: 'none',
-                    zIndex: Math.max(this.options.style.zIndex || 0, (chartStyle && chartStyle.zIndex || 0) + 3)
+                    zIndex: Math.max(this.options.style.zIndex || 0, (chartStyle?.zIndex || 0) + 3)
                 });
                 /**
                  * Reference to the tooltip's renderer, when
@@ -24087,6 +24088,10 @@ class Tooltip {
             attr.anchorX = anchorX;
             attr.anchorY = anchorY;
         }
+        else {
+            // Clear anchor with NaN to prevent animation (#22295)
+            attr.anchorX = attr.anchorY = NaN;
+        }
         animation.step = () => tooltip.drawTracker();
         tooltip.getLabel().animate(attr, animation);
     }
@@ -24243,7 +24248,7 @@ class Tooltip {
         };
         const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
-        const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
+        const headerTop = Boolean(chart.xAxis[0]?.opposite);
         const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
         let distributionBoxTop = plotTop + scrollTop;
         let headerHeight = 0;
@@ -24595,7 +24600,7 @@ class Tooltip {
      * @function Highcharts.Tooltip#headerFooterFormatter
      */
     headerFooterFormatter(point, isFooter) {
-        const series = point.series, tooltipOptions = series.tooltipOptions, xAxis = series.xAxis, dateTime = xAxis && xAxis.dateTime, e = {
+        const series = point.series, tooltipOptions = series.tooltipOptions, xAxis = series.xAxis, dateTime = xAxis?.dateTime, e = {
             isFooter,
             point
         };
@@ -24893,6 +24898,12 @@ class Point {
      * @type {number|undefined}
      */
     /**
+     * Array of all hovered points when using shared tooltips.
+     *
+     * @name Highcharts.Point#points
+     * @type {Array<Highcharts.Point>|undefined}
+     */
+    /**
      * The series object associated with the point.
      *
      * @name Highcharts.Point#series
@@ -25072,7 +25083,7 @@ class Point {
                 point.onMouseOut();
             }
             // Remove properties after animation
-            if (!dataSorting || !dataSorting.enabled) {
+            if (!dataSorting?.enabled) {
                 destroyPoint();
             }
             else {
@@ -25097,7 +25108,7 @@ class Point {
         });
         props.plural.forEach(function (plural) {
             point[plural].forEach(function (item) {
-                if (item && item.element) {
+                if (item?.element) {
                     item.destroy();
                 }
             });
@@ -25155,8 +25166,9 @@ class Point {
             (typeof point.colorIndex !== 'undefined' ?
                 ' highcharts-color-' + point.colorIndex : '') +
             (point.options.className ? ' ' + point.options.className : '') +
-            (point.zone && point.zone.className ? ' ' +
-                point.zone.className.replace('highcharts-negative', '') : '');
+            (point.zone?.className ?
+                ' ' + point.zone.className.replace('highcharts-negative', '') :
+                '');
     }
     /**
      * Get props of all existing graphical point elements.
@@ -25225,7 +25237,7 @@ class Point {
         if (!this.nonZonedColor) {
             this.nonZonedColor = this.color;
         }
-        if (zone && zone.color && !this.options.color) {
+        if (zone?.color && !this.options.color) {
             this.color = zone.color;
         }
         else {
@@ -25554,7 +25566,7 @@ class Point {
             }
             if (Point_isObject(options, true)) {
                 // Destroy so we can get new elements
-                if (graphic && graphic.element) {
+                if (graphic?.element) {
                     // "null" is also a valid symbol
                     if (options &&
                         options.marker &&
@@ -25785,9 +25797,8 @@ class Point {
     setState(state, move) {
         const point = this, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] ||
             {}), markerOptions = (Point_defaultOptions.plotOptions[series.type].marker &&
-            series.options.marker), normalDisabled = (markerOptions && markerOptions.enabled === false), markerStateOptions = ((markerOptions &&
-            markerOptions.states &&
-            markerOptions.states[state || 'normal']) || {}), stateDisabled = markerStateOptions.enabled === false, pointMarker = point.marker || {}, chart = series.chart, hasMarkers = (markerOptions && series.markerAttribs);
+            series.options.marker), normalDisabled = (markerOptions && markerOptions.enabled === false), markerStateOptions = markerOptions?.states?.[state || 'normal'] ||
+            {}, stateDisabled = markerStateOptions.enabled === false, pointMarker = point.marker || {}, chart = series.chart, hasMarkers = (markerOptions && series.markerAttribs);
         let halo = series.halo, markerAttribs, pointAttribs, pointAttribsAnimation, stateMarkerGraphic = series.stateMarkerGraphic, newSymbol;
         state = state || ''; // Empty string
         if (
@@ -25895,9 +25906,8 @@ class Point {
         // Show me your halo
         const haloOptions = stateOptions.halo;
         const markerGraphic = (point.graphic || stateMarkerGraphic);
-        const markerVisibility = (markerGraphic && markerGraphic.visibility || 'inherit');
-        if (haloOptions &&
-            haloOptions.size &&
+        const markerVisibility = markerGraphic?.visibility || 'inherit';
+        if (haloOptions?.size &&
             markerGraphic &&
             markerVisibility !== 'hidden' &&
             !point.isCluster) {
@@ -26496,7 +26506,7 @@ class Pointer {
                 chartY: y + yAxis.pos
             };
         }
-        if (shapeArgs && shapeArgs.x && shapeArgs.y) {
+        if (shapeArgs?.x && shapeArgs.y) {
             // E.g. pies do not have axes
             return {
                 chartX: shapeArgs.x,
@@ -26618,7 +26628,7 @@ class Pointer {
             existingHoverPoint :
             this.findNearestKDPoint(searchSeries, shared, e);
         // Assign hover series
-        hoverSeries = hoverPoint && hoverPoint.series;
+        hoverSeries = hoverPoint?.series;
         // If we have a hoverPoint, assign hoverPoints.
         if (hoverPoint) {
             // When tooltip is shared, it displays more than one point
@@ -26890,8 +26900,7 @@ class Pointer {
             // If the tooltip has stickOnContact enabled, do nothing. This
             // applies regardless of any combinations of the `split` and
             // `useHTML` options.
-            !(tooltip &&
-                tooltip.shouldStickOnContact(pEvt))) {
+            !tooltip?.shouldStickOnContact(pEvt)) {
             if (this.inClass(pEvt.target, 'highcharts-no-tooltip')) {
                 this.reset(false, 0);
             }
@@ -26949,8 +26958,7 @@ class Pointer {
             !chart.isInsidePlot(pEvt.chartX - chart.plotLeft, pEvt.chartY - chart.plotTop, {
                 visiblePlotOnly: true
             }) &&
-            !(tooltip &&
-                tooltip.shouldStickOnContact(pEvt)) && (pEvt.target === chart.container.ownerDocument ||
+            !tooltip?.shouldStickOnContact(pEvt) && (pEvt.target === chart.container.ownerDocument ||
             !this.inClass(pEvt.target, 'highcharts-tracker'))) {
             this.reset();
         }
@@ -27193,7 +27201,7 @@ class Pointer {
      * @param {number} [delay]
      */
     reset(allowMove, delay) {
-        const pointer = this, chart = pointer.chart, hoverSeries = chart.hoverSeries, hoverPoint = chart.hoverPoint, hoverPoints = chart.hoverPoints, tooltip = chart.tooltip, tooltipPoints = tooltip && tooltip.shared ?
+        const pointer = this, chart = pointer.chart, hoverSeries = chart.hoverSeries, hoverPoint = chart.hoverPoint, hoverPoints = chart.hoverPoints, tooltip = chart.tooltip, tooltipPoints = tooltip?.shared ?
             hoverPoints :
             hoverPoint;
         // Check if the points have moved outside the plot area (#1003, #4736,
@@ -27273,20 +27281,19 @@ class Pointer {
      * @emits Highcharts.Point#event:mouseOver
      */
     runPointActions(e, p, force) {
-        const pointer = this, chart = pointer.chart, series = chart.series, tooltip = (chart.tooltip && chart.tooltip.options.enabled ?
+        const pointer = this, chart = pointer.chart, series = chart.series, tooltip = (chart.tooltip?.options.enabled ?
             chart.tooltip :
             void 0), shared = (tooltip ?
             tooltip.shared :
             false);
-        let hoverPoint = p || chart.hoverPoint, hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries;
+        let hoverPoint = p || chart.hoverPoint, hoverSeries = hoverPoint?.series || chart.hoverSeries;
         const // `onMouseOver` or already hovering a series with directTouch
-        isDirectTouch = (!e || e.type !== 'touchmove') && (!!p || ((hoverSeries && hoverSeries.directTouch) &&
+        isDirectTouch = (!e || e.type !== 'touchmove') && (!!p || ((hoverSeries?.directTouch) &&
             pointer.isDirectTouch)), hoverData = this.getHoverData(hoverPoint, hoverSeries, series, isDirectTouch, shared, e);
         // Update variables from hoverData.
         hoverPoint = hoverData.hoverPoint;
         hoverSeries = hoverData.hoverSeries;
-        const points = hoverData.hoverPoints, followPointer = hoverSeries &&
-            hoverSeries.tooltipOptions.followPointer &&
+        const points = hoverData.hoverPoints, followPointer = hoverSeries?.tooltipOptions.followPointer &&
             !hoverSeries.tooltipOptions.split, useSharedTooltip = (shared &&
             hoverSeries &&
             !hoverSeries.noSharedTooltip);
@@ -27295,7 +27302,7 @@ class Pointer {
         if (hoverPoint &&
             (force ||
                 hoverPoint !== chart.hoverPoint ||
-                (tooltip && tooltip.isHidden))) {
+                tooltip?.isHidden)) {
             (chart.hoverPoints || []).forEach(function (p) {
                 if (points.indexOf(p) === -1) {
                     p.setState();
@@ -27365,12 +27372,12 @@ class Pointer {
         }
         // Issues related to crosshair #4927, #5269 #5066, #5658
         chart.axes.forEach(function drawAxisCrosshair(axis) {
-            const snap = Pointer_pick((axis.crosshair || {}).snap, true);
+            const snap = axis.crosshair?.snap ?? true;
             let point;
             if (snap) {
                 point = chart.hoverPoint; // #13002
                 if (!point || point.series[axis.coll] !== axis) {
-                    point = Pointer_find(points, (p) => p.series && p.series[axis.coll] === axis);
+                    point = Pointer_find(points, (p) => p.series?.[axis.coll] === axis);
                 }
             }
             // Axis has snapping crosshairs, and one of the hover points belongs
@@ -27485,8 +27492,7 @@ class Pointer {
             }
             hoverChart.pointer?.onContainerMouseLeave(e || relatedTargetObj);
         }
-        if (!hoverChart ||
-            !hoverChart.mouseIsDown) {
+        if (!hoverChart?.mouseIsDown) {
             Pointer.hoverChartIndex = chart.index;
         }
     }
@@ -30868,10 +30874,8 @@ class Series {
         });
         Series_registerEventOptions(this, options);
         const events = options.events;
-        if ((events && events.click) ||
-            (options.point &&
-                options.point.events &&
-                options.point.events.click) ||
+        if (events?.click ||
+            options.point?.events?.click ||
             options.allowPointSelect) {
             chart.runTrackerClick = true;
         }
@@ -30887,13 +30891,13 @@ class Series {
         if (chartSeries.length) {
             lastSeries = chartSeries[chartSeries.length - 1];
         }
-        series._i = Series_pick(lastSeries && lastSeries._i, -1) + 1;
+        series._i = Series_pick(lastSeries?._i, -1) + 1;
         series.opacity = series.options.opacity;
         // Insert the series and re-order all series above the insertion
         // point.
         chart.orderItems('series', Series_insertItem(this, chartSeries));
         // Set options for series with sorting and set data later.
-        if (options.dataSorting && options.dataSorting.enabled) {
+        if (options.dataSorting?.enabled) {
             series.setDataSortingOptions();
         }
         else if (!series.points && !series.data) {
@@ -31075,6 +31079,8 @@ class Series {
         Series_fireEvent(this, 'setOptions', e);
         // These may be modified by the event
         const typeOptions = e.plotOptions[this.type], userPlotOptions = (userOptions.plotOptions || {}), userPlotOptionsSeries = userPlotOptions.series || {}, defaultPlotOptionsType = (Series_defaultOptions.plotOptions[this.type] || {}), userPlotOptionsType = userPlotOptions[this.type] || {};
+        // Merge in multiple data label options from the plot option. (#21928)
+        typeOptions.dataLabels = this.mergeArrays(defaultPlotOptionsType.dataLabels, typeOptions.dataLabels);
         // Use copy to prevent undetected changes (#9762)
         /**
          * Contains series options by the user without defaults.
@@ -31251,7 +31257,7 @@ class Series {
      * Returns the index of a matching point, or undefined if no match is found.
      */
     findPointIndex(optionsObject, fromIndex) {
-        const id = optionsObject.id, x = optionsObject.x, oldData = this.points, dataSorting = this.options.dataSorting;
+        const { id, x } = optionsObject, oldData = this.points, dataSorting = this.options.dataSorting, cropStart = this.cropStart || 0;
         let matchingPoint, matchedById, pointIndex;
         if (id) {
             const item = this.chart.get(id);
@@ -31264,7 +31270,7 @@ class Series {
             this.options.relativeXValue) {
             let matcher = (oldPoint) => !oldPoint.touched &&
                 oldPoint.index === optionsObject.index;
-            if (dataSorting && dataSorting.matchByName) {
+            if (dataSorting?.matchByName) {
                 matcher = (oldPoint) => !oldPoint.touched &&
                     oldPoint.name === optionsObject.name;
             }
@@ -31279,7 +31285,7 @@ class Series {
             }
         }
         if (matchingPoint) {
-            pointIndex = matchingPoint && matchingPoint.index;
+            pointIndex = matchingPoint?.index;
             if (typeof pointIndex !== 'undefined') {
                 matchedById = true;
             }
@@ -31292,12 +31298,12 @@ class Series {
         if (pointIndex !== -1 &&
             typeof pointIndex !== 'undefined' &&
             this.cropped) {
-            pointIndex = (pointIndex >= this.cropStart) ?
-                pointIndex - this.cropStart : pointIndex;
+            pointIndex = pointIndex >= cropStart ?
+                pointIndex - cropStart : pointIndex;
         }
         if (!matchedById &&
             Series_isNumber(pointIndex) &&
-            oldData[pointIndex] && oldData[pointIndex].touched) {
+            oldData[pointIndex]?.touched) {
             pointIndex = void 0;
         }
         return pointIndex;
@@ -31313,29 +31319,26 @@ class Series {
      * @function Highcharts.Series#updateData
      */
     updateData(data, animation) {
-        const options = this.options, dataSorting = options.dataSorting, oldData = this.points, pointsToAdd = [], requireSorting = this.requireSorting, equalLength = data.length === oldData.length;
+        const { options, requireSorting } = this, dataSorting = options.dataSorting, oldData = this.points, pointsToAdd = [], equalLength = data.length === oldData.length;
         let hasUpdatedByKey, i, point, lastIndex, succeeded = true;
         this.xIncrement = null;
         // Iterate the new data
-        data.forEach(function (pointOptions, i) {
+        data.forEach((pointOptions, i) => {
             const optionsObject = (Series_defined(pointOptions) &&
-                this.pointClass.prototype.optionsToObject.call({ series: this }, pointOptions)) || {};
+                this.pointClass.prototype.optionsToObject.call({ series: this }, pointOptions)) || {}, { id, x } = optionsObject;
             let pointIndex;
-            // Get the x of the new data point
-            const x = optionsObject.x, id = optionsObject.id;
             if (id || Series_isNumber(x)) {
                 pointIndex = this.findPointIndex(optionsObject, lastIndex);
-                // Matching X not found
-                // or used already due to ununique x values (#8995),
-                // add point (but later)
+                // Matching X not found or used already due to non-unique x
+                // values (#8995), add point (but later)
                 if (pointIndex === -1 ||
                     typeof pointIndex === 'undefined') {
                     pointsToAdd.push(pointOptions);
                     // Matching X found, update
                 }
                 else if (oldData[pointIndex] &&
-                    pointOptions !== options.data[pointIndex]) {
-                    oldData[pointIndex].update(pointOptions, false, null, false);
+                    pointOptions !== options.data?.[pointIndex]) {
+                    oldData[pointIndex].update(pointOptions, false, void 0, false);
                     // Mark it touched, below we will remove all points that
                     // are not touched.
                     oldData[pointIndex].touched = true;
@@ -31354,7 +31357,7 @@ class Series {
                 // non-matches.
                 if (!equalLength ||
                     i !== pointIndex ||
-                    (dataSorting && dataSorting.enabled) ||
+                    dataSorting?.enabled ||
                     this.hasDerivedData) {
                     hasUpdatedByKey = true;
                 }
@@ -31369,19 +31372,19 @@ class Series {
             i = oldData.length;
             while (i--) {
                 point = oldData[i];
-                if (point && !point.touched && point.remove) {
-                    point.remove(false, animation);
+                if (point && !point.touched) {
+                    point.remove?.(false, animation);
                 }
             }
             // If we did not find keys (ids or x-values), and the length is the
             // same, update one-to-one
         }
-        else if (equalLength && (!dataSorting || !dataSorting.enabled)) {
-            data.forEach(function (point, i) {
+        else if (equalLength && !dataSorting?.enabled) {
+            data.forEach((point, i) => {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
                 if (point !== oldData[i].y && !oldData[i].destroyed) {
-                    oldData[i].update(point, false, null, false);
+                    oldData[i].update(point, false, void 0, false);
                 }
             });
             // Don't add new points since those configs are used above
@@ -31391,7 +31394,7 @@ class Series {
         else {
             succeeded = false;
         }
-        oldData.forEach(function (point) {
+        oldData.forEach((point) => {
             if (point) {
                 point.touched = false;
             }
@@ -31400,8 +31403,8 @@ class Series {
             return false;
         }
         // Add new points
-        pointsToAdd.forEach(function (point) {
-            this.addPoint(point, false, null, null, false);
+        pointsToAdd.forEach((point) => {
+            this.addPoint(point, false, void 0, void 0, false);
         }, this);
         const xData = this.getColumn('x');
         if (this.xIncrement === null &&
@@ -31462,7 +31465,7 @@ class Series {
      *        `false` to prevent.
      */
     setData(data, redraw = true, animation, updatePoints) {
-        const series = this, oldData = series.points, oldDataLength = (oldData && oldData.length) || 0, options = series.options, chart = series.chart, dataSorting = options.dataSorting, xAxis = series.xAxis, turboThreshold = options.turboThreshold, table = this.dataTable, dataColumnKeys = this.dataColumnKeys(), pointValKey = series.pointValKey || 'y', pointArrayMap = series.pointArrayMap || [], valueCount = pointArrayMap.length, keys = options.keys;
+        const series = this, oldData = series.points, oldDataLength = oldData?.length || 0, options = series.options, chart = series.chart, dataSorting = options.dataSorting, xAxis = series.xAxis, turboThreshold = options.turboThreshold, table = this.dataTable, dataColumnKeys = this.dataColumnKeys(), pointValKey = series.pointValKey || 'y', pointArrayMap = series.pointArrayMap || [], valueCount = pointArrayMap.length, keys = options.keys;
         let i, updatedData, indexOfX = 0, indexOfY = 1, copiedData;
         if (!chart.options.chart.allowMutatingData) { // #4259
             // Remove old reference
@@ -31476,7 +31479,7 @@ class Series {
         }
         data = copiedData || data || [];
         const dataLength = data.length;
-        if (dataSorting && dataSorting.enabled) {
+        if (dataSorting?.enabled) {
             data = this.sortData(data);
         }
         // First try to run Point.update which is cheaper, allows animation, and
@@ -31652,8 +31655,7 @@ class Series {
         if (series.linkedSeries) {
             series.linkedSeries.forEach(function (linkedSeries) {
                 const options = linkedSeries.options, seriesData = options.data;
-                if ((!options.dataSorting ||
-                    !options.dataSorting.enabled) &&
+                if (!options.dataSorting?.enabled &&
                     seriesData) {
                     seriesData.forEach(function (pointOptions, i) {
                         seriesData[i] = getPointOptionsObject(linkedSeries, pointOptions);
@@ -31808,8 +31810,7 @@ class Series {
      * @function Highcharts.Series#generatePoints
      */
     generatePoints() {
-        const series = this, options = series.options, dataOptions = series.processedData || options.data, table = series.dataTable.modified, xData = series.getColumn('x', true), PointClass = series.pointClass, processedDataLength = table.rowCount, cropStart = series.cropStart || 0, hasGroupedData = series.hasGroupedData, keys = options.keys, points = [], groupCropStartIndex = (options.dataGrouping &&
-            options.dataGrouping.groupAll ?
+        const series = this, options = series.options, dataOptions = series.processedData || options.data, table = series.dataTable.modified, xData = series.getColumn('x', true), PointClass = series.pointClass, processedDataLength = table.rowCount, cropStart = series.cropStart || 0, hasGroupedData = series.hasGroupedData, keys = options.keys, points = [], groupCropStartIndex = (options.dataGrouping?.groupAll ?
             cropStart :
             0), categories = series.xAxis?.categories, pointArrayMap = series.pointArrayMap || ['y'], 
         // Create a configuration object out of a data row
@@ -32507,13 +32508,13 @@ class Series {
     markerAttribs(point, state) {
         const seriesOptions = this.options, seriesMarkerOptions = seriesOptions.marker, pointMarkerOptions = point.marker || {}, symbol = (pointMarkerOptions.symbol ||
             seriesMarkerOptions.symbol), attribs = {};
-        let seriesStateOptions, pointStateOptions, radius = Series_pick(pointMarkerOptions.radius, seriesMarkerOptions && seriesMarkerOptions.radius);
+        let seriesStateOptions, pointStateOptions, radius = Series_pick(pointMarkerOptions.radius, seriesMarkerOptions?.radius);
         // Handle hover and select states
         if (state) {
             seriesStateOptions = seriesMarkerOptions.states[state];
             pointStateOptions = pointMarkerOptions.states &&
                 pointMarkerOptions.states[state];
-            radius = Series_pick(pointStateOptions && pointStateOptions.radius, seriesStateOptions && seriesStateOptions.radius, radius && radius + (seriesStateOptions && seriesStateOptions.radiusPlus ||
+            radius = Series_pick(pointStateOptions?.radius, seriesStateOptions?.radius, radius && radius + (seriesStateOptions?.radiusPlus ||
                 0));
         }
         point.hasImage = symbol && symbol.indexOf('url') === 0;
@@ -32558,7 +32559,7 @@ class Series {
      * The presentational attributes to be set on the point.
      */
     pointAttribs(point, state) {
-        const seriesMarkerOptions = this.options.marker, pointOptions = point && point.options, pointMarkerOptions = ((pointOptions && pointOptions.marker) || {}), pointColorOption = pointOptions && pointOptions.color, pointColor = point && point.color, zoneColor = point && point.zone && point.zone.color;
+        const seriesMarkerOptions = this.options.marker, pointOptions = point?.options, pointMarkerOptions = pointOptions?.marker || {}, pointColorOption = pointOptions?.color, pointColor = point?.color, zoneColor = point?.zone?.color;
         let seriesStateOptions, pointStateOptions, color = this.color, fill, stroke, strokeWidth = Series_pick(pointMarkerOptions.lineWidth, seriesMarkerOptions.lineWidth), opacity = 1;
         color = (pointColorOption ||
             zoneColor ||
@@ -32602,7 +32603,7 @@ class Series {
      */
     destroy(keepEventsForUpdate) {
         const series = this, chart = series.chart, issue134 = /AppleWebKit\/533/.test(Series_win.navigator.userAgent), data = series.data || [];
-        let destroy, i, point, axis;
+        let destroy, i, axis;
         // Add event hook
         Series_fireEvent(series, 'destroy', { keepEventsForUpdate });
         // Remove events
@@ -32610,7 +32611,7 @@ class Series {
         // Erase from axes
         (series.axisTypes || []).forEach(function (AXIS) {
             axis = series[AXIS];
-            if (axis && axis.series) {
+            if (axis?.series) {
                 Series_erase(axis.series, series);
                 axis.isDirty = axis.forceRedraw = true;
             }
@@ -32622,10 +32623,7 @@ class Series {
         // Destroy all points with their elements
         i = data.length;
         while (i--) {
-            point = data[i];
-            if (point && point.destroy) {
-                point.destroy();
-            }
+            data[i]?.destroy?.();
         }
         for (const zone of series.zones) {
             // Destroy SVGElement's but preserve primitive props (#20426)
@@ -33284,7 +33282,7 @@ class Series {
      * @emits Highcharts.Series#event:addPoint
      */
     addPoint(options, redraw, shift, animation, withEvent) {
-        const series = this, seriesOptions = series.options, { chart, data, dataTable: table, xAxis } = series, names = xAxis && xAxis.hasNames && xAxis.names, dataOptions = seriesOptions.data, xData = series.getColumn('x');
+        const series = this, seriesOptions = series.options, { chart, data, dataTable: table, xAxis } = series, names = xAxis?.hasNames && xAxis.names, dataOptions = seriesOptions.data, xData = series.getColumn('x');
         let isInTheMiddle, i;
         // Optional redraw, defaults to true
         redraw = Series_pick(redraw, true);
@@ -33644,7 +33642,7 @@ class Series {
                 }
             }
             for (const point of this.points) {
-                if (point && point.series) {
+                if (point?.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated
                     // series options.
@@ -34666,7 +34664,7 @@ class Legend {
      */
     positionItem(item) {
         const legend = this, { group, x = 0, y = 0 } = item.legendItem || {}, options = legend.options, symbolPadding = options.symbolPadding, ltr = !options.rtl, checkbox = item.checkbox;
-        if (group && group.element) {
+        if (group?.element) {
             const attribs = {
                 translateX: ltr ?
                     x :
@@ -34741,7 +34739,7 @@ class Legend {
      * @function Highcharts.Legend#positionCheckboxes
      */
     positionCheckboxes() {
-        const alignAttr = this.group && this.group.alignAttr, clipHeight = this.clipHeight || this.legendHeight, titleHeight = this.titleHeight;
+        const alignAttr = this.group?.alignAttr, clipHeight = this.clipHeight || this.legendHeight, titleHeight = this.titleHeight;
         let translateY;
         if (alignAttr) {
             translateY = alignAttr.translateY;
@@ -34907,7 +34905,7 @@ class Legend {
         legend.setText(item);
         // Calculate the positions for the next line
         const bBox = label.getBBox();
-        const fontMetricsH = (legend.fontMetrics && legend.fontMetrics.h) || 0;
+        const fontMetricsH = legend.fontMetrics?.h || 0;
         item.itemWidth = item.checkboxOffset =
             options.itemWidth ||
                 legendItem.labelWidth ||
@@ -34978,13 +34976,13 @@ class Legend {
     getAllItems() {
         let allItems = [];
         this.chart.series.forEach(function (series) {
-            const seriesOptions = series && series.options;
+            const seriesOptions = series?.options;
             // Handle showInLegend. If the series is linked to another series,
             // defaults to false.
             if (series && Legend_pick(seriesOptions.showInLegend, !Legend_defined(seriesOptions.linkedTo) ? void 0 : false, true)) {
                 // Use points or series for the legend item depending on
                 // legendType
-                allItems = allItems.concat((series.legendItem || {}).labels ||
+                allItems = allItems.concat(series.legendItem?.labels ||
                     (seriesOptions.legendType === 'point' ?
                         series.data :
                         series));
@@ -35138,8 +35136,8 @@ class Legend {
         }
         legend.renderTitle();
         // Sort by legendIndex
-        Legend_stableSort(allItems, (a, b) => ((a.options && a.options.legendIndex) || 0) -
-            ((b.options && b.options.legendIndex) || 0));
+        Legend_stableSort(allItems, (a, b) => (a.options?.legendIndex || 0) -
+            (b.options?.legendIndex || 0));
         // Reversed legend
         if (options.reversed) {
             allItems.reverse();
@@ -35288,7 +35286,7 @@ class Legend {
             }
             return legend[key];
         };
-        let clipHeight, lastY, legendItem, spaceHeight = (chart.spacingBox.height +
+        let clipHeight, lastY, legendItem, lastLegendItem, spaceHeight = (chart.spacingBox.height +
             (alignTop ? -optionsY : optionsY) - padding), nav = this.nav, clipRect = this.clipRect;
         // Adjust the height
         if (options.layout === 'horizontal' &&
@@ -35322,8 +35320,8 @@ class Legend {
                 }
                 // Keep track of which page each item is on
                 legendItem.pageIx = len - 1;
-                if (lastY) {
-                    (allItems[i - 1].legendItem || {}).pageIx = len - 1;
+                if (lastY && lastLegendItem) {
+                    lastLegendItem.pageIx = len - 1;
                 }
                 // Add the last page if needed (#2617, #13683)
                 if (
@@ -35338,6 +35336,7 @@ class Legend {
                 if (y !== lastY) {
                     lastY = y;
                 }
+                lastLegendItem = legendItem;
             });
             // Only apply clipping if needed. Clipping causes blurred legend in
             // PDF export (#1787)
@@ -36017,7 +36016,7 @@ class Chart {
              */
             this.time = new Core_Time(Chart_extend(options.time || {}, {
                 locale: this.locale
-            }));
+            }), options.lang);
             options.time = this.time.options;
             /**
              * Callback function to override the default function that formats
@@ -36752,7 +36751,7 @@ class Chart {
     temporaryDisplay(revert) {
         let node = this.renderTo, tempStyle;
         if (!revert) {
-            while (node && node.style) {
+            while (node?.style) {
                 // When rendering to a detached node, it needs to be temporarily
                 // attached in order to read styling and bounding boxes (#5783,
                 // #7024).
@@ -36789,7 +36788,7 @@ class Chart {
             }
         }
         else {
-            while (node && node.style) {
+            while (node?.style) {
                 if (node.hcOrigStyle) {
                     Chart_css(node, node.hcOrigStyle);
                     delete node.hcOrigStyle;
@@ -36910,7 +36909,7 @@ class Chart {
          * @name Highcharts.Chart#renderer
          * @type {Highcharts.SVGRenderer}
          */
-        chart.renderer = new Renderer(container, chartWidth, chartHeight, void 0, optionsChart.forExport, options.exporting && options.exporting.allowHTML, chart.styledMode);
+        chart.renderer = new Renderer(container, chartWidth, chartHeight, void 0, optionsChart.forExport, options.exporting?.allowHTML, chart.styledMode);
         // Set the initial animation from the options
         Chart_setAnimation(void 0, chart);
         chart.setClassName(optionsChart.className);
@@ -36947,7 +36946,7 @@ class Chart {
             this.marginBottom = Math.max(this.marginBottom, titleOffset[2] + spacing[2]);
         }
         // Adjust for legend
-        if (this.legend && this.legend.display) {
+        if (this.legend?.display) {
             this.legend.adjustMargins(margin, spacing);
         }
         Chart_fireEvent(this, 'getMargins');
@@ -36973,7 +36972,7 @@ class Chart {
         if (chart.hasCartesianSeries) {
             getOffset(chart.axes);
         }
-        else if (colorAxis && colorAxis.length) {
+        else if (colorAxis?.length) {
             getOffset(colorAxis);
         }
         // Add the axis offsets
@@ -37398,7 +37397,7 @@ class Chart {
                     (klass && klass.prototype[key]);
             // Requires it
             // 4. Check if any the chart's series require it
-            i = seriesOptions && seriesOptions.length;
+            i = seriesOptions?.length;
             while (!value && i--) {
                 klass = Chart_seriesTypes[seriesOptions[i].type];
                 if (klass && klass.prototype[key]) {
@@ -37558,7 +37557,7 @@ class Chart {
         if (chart.hasCartesianSeries) {
             renderAxes(axes);
         }
-        else if (colorAxis && colorAxis.length) {
+        else if (colorAxis?.length) {
             renderAxes(colorAxis);
         }
         // The series
@@ -37639,7 +37638,7 @@ class Chart {
      * @emits Highcharts.Chart#event:destroy
      */
     destroy() {
-        const chart = this, axes = chart.axes, series = chart.series, container = chart.container, parentNode = container && container.parentNode;
+        const chart = this, axes = chart.axes, series = chart.series, container = chart.container, parentNode = container?.parentNode;
         let i;
         // Fire the chart.destroy event
         Chart_fireEvent(chart, 'destroy');
@@ -37661,9 +37660,7 @@ class Chart {
             axes[i] = axes[i].destroy();
         }
         // Destroy scroller & scroller series before destroying base series
-        if (this.scroller && this.scroller.destroy) {
-            this.scroller.destroy();
-        }
+        this.scroller?.destroy?.();
         // Destroy each series
         i = series.length;
         while (i--) {
@@ -37675,11 +37672,8 @@ class Chart {
             'plotBGImage', 'plotBorder', 'seriesGroup', 'clipRect', 'credits',
             'pointer', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip',
             'renderer'
-        ].forEach(function (name) {
-            const prop = chart[name];
-            if (prop && prop.destroy) {
-                chart[name] = prop.destroy();
-            }
+        ].forEach((name) => {
+            chart[name] = chart[name]?.destroy?.();
         });
         // Remove container and all SVG, check container as it can break in IE
         // when destroyed before finished loading
@@ -37775,7 +37769,7 @@ class Chart {
             // Make chart behave as an image with the title as alt text
             this.renderer.boxWrapper.attr({
                 role: 'img',
-                'aria-label': ((title && title.element.textContent) || ''
+                'aria-label': (title?.element.textContent || ''
                 // #17753, < is not allowed in SVG attributes
                 ).replace(/</g, '&lt;')
             });
@@ -38252,7 +38246,7 @@ class Chart {
             }, this);
         }
         // Update size. Redraw is forced.
-        const newWidth = optionsChart && optionsChart.width;
+        const newWidth = optionsChart?.width;
         const newHeight = optionsChart && (Chart_isString(optionsChart.height) ?
             Chart_relativeLength(optionsChart.height, newWidth || chart.chartWidth) :
             optionsChart.height);
@@ -39451,12 +39445,12 @@ function chartGetStacks() {
     const chart = this, inverted = chart.inverted;
     // Reset stacks for each axis
     chart.axes.forEach((axis) => {
-        if (axis.stacking && axis.stacking.stacks && axis.hasVisibleSeries) {
+        if (axis.stacking?.stacks && axis.hasVisibleSeries) {
             axis.stacking.oldStacks = axis.stacking.stacks;
         }
     });
     chart.series.forEach((series) => {
-        const xAxisOptions = series.xAxis && series.xAxis.options || {};
+        const xAxisOptions = series.xAxis?.options || {};
         if (series.options.stacking && series.reserveSpace()) {
             series.stackKey = [
                 series.type,
@@ -39982,7 +39976,7 @@ class LineSeries extends Series_Series {
             const plotX = point.plotX, plotY = point.plotY, lastPoint = points[i - 1], isNull = point.isNull || typeof plotY !== 'number';
             // The path to this point from the previous
             let pathToPoint;
-            if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
+            if ((point.leftCliff || lastPoint?.rightCliff) &&
                 !connectCliffs) {
                 gap = true; // ... and continue
             }
@@ -42732,6 +42726,7 @@ var DataLabel;
             seriesProto.alignDataLabel = alignDataLabel;
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
+            seriesProto.mergeArrays = mergeArrays;
             seriesProto.setDataLabelStartPos = setDataLabelStartPos;
             seriesProto.hasDataLabels = hasDataLabels;
         }
@@ -42934,7 +42929,7 @@ var DataLabel;
                 while (j--) {
                     // The item can be undefined if a disabled data label is
                     // succeeded by an enabled one (#19457)
-                    if (!dataLabels[j] || !dataLabels[j].isActive) {
+                    if (!dataLabels[j]?.isActive) {
                         dataLabels[j]?.destroy();
                         dataLabels.splice(j, 1);
                     }
@@ -45509,8 +45504,7 @@ var PieDataLabel_ColumnDataLabel;
                         dataLabel.css({
                             width: (Math.max(dataLabel.getBBox().width -
                                 labelPosition.sideOverflow, 0)) + 'px',
-                            textOverflow: ((dataLabel.options?.style || {})
-                                .textOverflow ||
+                            textOverflow: (dataLabel.options?.style?.textOverflow ||
                                 'ellipsis')
                         });
                         dataLabel.shortened = true;
@@ -46423,12 +46417,12 @@ var Responsive;
         }
         // Merge matching rules
         const mergedOptions = Responsive_merge(...ruleIds
-            .map((ruleId) => Responsive_find((options || {}).rules || [], (rule) => (rule._id === ruleId)))
-            .map((rule) => (rule && rule.chartOptions)));
+            .map((ruleId) => Responsive_find(options?.rules || [], (rule) => (rule._id === ruleId)))
+            .map((rule) => rule?.chartOptions));
         mergedOptions.isResponsiveOptions = true;
         // Stringified key for the rules that currently apply.
         ruleIds = (ruleIds.toString() || void 0);
-        const currentRuleIds = (currentResponsive && currentResponsive.ruleIds);
+        const currentRuleIds = currentResponsive?.ruleIds;
         // Changes in what rules apply
         if (ruleIds !== currentRuleIds) {
             // Undo previous rules. Before we apply a new set of rules, we

@@ -47,7 +47,7 @@ function onNavigationBindingsShowPopup(config) {
         this.popup = new Popup(this.chart.container, (this.chart.options.navigation.iconsURL ||
             (this.chart.options.stockTools &&
                 this.chart.options.stockTools.gui.iconsURL) ||
-            'https://code.highcharts.com/@product.version@/gfx/stock-icons/'), this.chart);
+            'https://code.highcharts.com/12.1.2-modified/gfx/stock-icons/'), this.chart);
     }
     this.popup.showForm(config.formType, this.chart, config.options, config.onSubmit);
 }

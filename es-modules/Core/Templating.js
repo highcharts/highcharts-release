@@ -120,18 +120,18 @@ function dateFormat(format, timestamp, upperCaseFirst) {
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param {Highcharts.Chart} [chart]
- *        A `Chart` instance used to get numberFormatter and time.
+ * @param {Highcharts.Chart} [owner]
+ *        A `Chart` or `DataGrid` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted string.
  */
-function format(str = '', ctx, chart) {
+function format(str = '', ctx, owner) {
     const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/gu, 
     // The sub expression regex is the same as the top expression regex,
     // but except parens and block helpers (#), and surrounded by parens
     // instead of curly brackets.
-    subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/gu, matches = [], floatRegex = /f$/, decRegex = /\.(\d)/, lang = chart?.options.lang || defaultOptions.lang, time = chart && chart.time || defaultTime, numberFormatter = chart && chart.numberFormatter || numberFormat;
+    subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/gu, matches = [], floatRegex = /f$/, decRegex = /\.(\d)/, lang = owner?.options?.lang || defaultOptions.lang, time = owner?.time || defaultTime, numberFormatter = owner?.numberFormatter || numberFormat;
     /*
      * Get a literal or variable value inside a template expression. May be
      * extended with other types like string or null if needed, but keep it
@@ -165,7 +165,7 @@ function format(str = '', ctx, chart) {
             match = subMatch;
             hasSub = true;
         }
-        if (!currentMatch || !currentMatch.isBlock) {
+        if (!currentMatch?.isBlock) {
             currentMatch = {
                 ctx,
                 expression: match[1],
@@ -257,7 +257,7 @@ function format(str = '', ctx, chart) {
             // Block helpers may return true or false. They may also return a
             // string, like the `each` helper.
             if (match.isBlock && typeof replacement === 'boolean') {
-                replacement = format(replacement ? body : elseBody, ctx, chart);
+                replacement = format(replacement ? body : elseBody, ctx, owner);
             }
             // Simple variable replacement
         }
@@ -287,7 +287,7 @@ function format(str = '', ctx, chart) {
         }
         str = str.replace(match.find, pick(replacement, ''));
     });
-    return hasSub ? format(str, ctx, chart) : str;
+    return hasSub ? format(str, ctx, owner) : str;
 }
 /**
  * Format a number and return a string based on input settings.

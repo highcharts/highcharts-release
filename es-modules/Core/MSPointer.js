@@ -182,7 +182,7 @@ class MSPointer extends Pointer {
         const tooltip = this.chart.tooltip;
         super.setDOMEvents();
         if (this.hasZoom ||
-            pick((tooltip && tooltip.options.followTouchMove), true)) {
+            pick((tooltip?.options.followTouchMove), true)) {
             this.batchMSEvents(addEvent);
         }
     }

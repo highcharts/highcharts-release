@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Gantt JS v12.1.2 (2024-12-21)
+ * @license Highcharts Gantt JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/pathfinder
  * @requires highcharts
  *
@@ -1984,7 +1984,7 @@ function arc(cx, cy, w, h, options) {
  * Callout shape used for default tooltips.
  */
 function callout(x, y, w, h, options) {
-    const arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX, anchorY = options && options.anchorY || 0;
+    const arrowLength = 6, halfDistance = 6, r = Math.min((options?.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options?.anchorX, anchorY = options?.anchorY || 0;
     const path = roundedRect(x, y, w, h, { r });
     if (!Symbols_isNumber(anchorX)) {
         return path;
@@ -2069,7 +2069,7 @@ function diamond(x, y, w, h) {
  *
  */
 function rect(x, y, w, h, options) {
-    if (options && options.r) {
+    if (options?.r) {
         return roundedRect(x, y, w, h, options);
     }
     return [
@@ -2348,8 +2348,8 @@ var ScrollbarAxis;
     ScrollbarAxis.compose = compose;
     /** @private */
     function getExtremes(axis) {
-        const axisMin = ScrollbarAxis_pick(axis.options && axis.options.min, axis.min);
-        const axisMax = ScrollbarAxis_pick(axis.options && axis.options.max, axis.max);
+        const axisMin = ScrollbarAxis_pick(axis.options?.min, axis.min);
+        const axisMax = ScrollbarAxis_pick(axis.options?.max, axis.max);
         return {
             axisMin,
             axisMax,
@@ -2378,9 +2378,7 @@ var ScrollbarAxis;
      */
     function onAxisAfterInit() {
         const axis = this;
-        if (axis.options &&
-            axis.options.scrollbar &&
-            axis.options.scrollbar.enabled) {
+        if (axis.options?.scrollbar?.enabled) {
             // Predefined options:
             axis.options.scrollbar.vertical = !axis.horiz;
             axis.options.startOnTick = axis.options.endOnTick = false;
@@ -6365,7 +6363,7 @@ var OrdinalAxis;
             // On touch devices, let default function handle the pinching
             (!e.touches || e.touches.length <= 1)) {
             const mouseDownX = chart.mouseDownX, extremes = xAxis.getExtremes(), dataMin = extremes.dataMin, dataMax = extremes.dataMax, min = extremes.min, max = extremes.max, hoverPoints = chart.hoverPoints, closestPointRange = (xAxis.closestPointRange ||
-                (xAxis.ordinal && xAxis.ordinal.overscrollPointsRange)), pointPixelWidth = (xAxis.translationSlope *
+                xAxis.ordinal?.overscrollPointsRange), pointPixelWidth = (xAxis.translationSlope *
                 (xAxis.ordinal.slope || closestPointRange)), 
             // How many ordinal units did we move?
             movedUnits = Math.round((mouseDownX - chartX) / pointPixelWidth), 
@@ -6445,7 +6443,7 @@ var OrdinalAxis;
         const xAxis = this.xAxis;
         // Destroy the extended ordinal index on updated data
         // and destroy extendedOrdinalPositions, #16055.
-        if (xAxis && xAxis.options.ordinal) {
+        if (xAxis?.options.ordinal) {
             delete xAxis.ordinal.index;
             delete xAxis.ordinal.originalOrdinalRange;
         }
@@ -6479,10 +6477,8 @@ var OrdinalAxis;
             // Final return value is based on ordinalIndex
         }
         else {
-            extendedOrdinalPositions =
-                ordinal.getExtendedPositions &&
-                    ordinal.getExtendedPositions();
-            if (!(extendedOrdinalPositions && extendedOrdinalPositions.length)) {
+            extendedOrdinalPositions = ordinal.getExtendedPositions?.();
+            if (!extendedOrdinalPositions?.length) {
                 return val;
             }
             const length = extendedOrdinalPositions.length;
@@ -6973,7 +6969,7 @@ var OrdinalAxis;
             return ret;
         }
         /**
-         * If overscroll is pixel or pecentage value, convert it to axis range.
+         * If overscroll is pixel or percentage value, convert it to axis range.
          *
          * @private
          * @param {number | string} overscroll
@@ -6988,6 +6984,16 @@ var OrdinalAxis;
             };
             if (isString(overscroll)) {
                 const overscrollValue = parseInt(overscroll, 10);
+                let isFullRange;
+                // #22334
+                if (OrdinalAxis_defined(axis.min) && OrdinalAxis_defined(axis.max) &&
+                    OrdinalAxis_defined(axis.dataMin) && OrdinalAxis_defined(axis.dataMax)) {
+                    isFullRange =
+                        axis.max - axis.min === axis.dataMax - axis.dataMin;
+                    if (!isFullRange) {
+                        this.originalOrdinalRange = axis.max - axis.min;
+                    }
+                }
                 if (/%$/.test(overscroll)) {
                     // If overscroll is percentage
                     return calculateOverscroll(overscrollValue / 100);
@@ -6996,7 +7002,8 @@ var OrdinalAxis;
                     // If overscroll is pixels, it is limited to 90% of the axis
                     // length to prevent division by zero
                     const limitedOverscrollValue = Math.min(overscrollValue, axis.len * 0.9), pixelToPercent = limitedOverscrollValue / axis.len;
-                    return calculateOverscroll(pixelToPercent / (1 - pixelToPercent));
+                    return calculateOverscroll(pixelToPercent /
+                        (isFullRange ? (1 - pixelToPercent) : 1));
                 }
                 // If overscroll is a string but not pixels or percentage,
                 // return 0 as no overscroll
@@ -10519,7 +10526,7 @@ const StaticScale = {
 
 ;// ./code/es-modules/masters/modules/static-scale.src.js
 /**
- * @license Highcharts Gantt JS v12.1.2 (2024-12-21)
+ * @license Highcharts Gantt JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/static-scale
  * @requires highcharts
  *
@@ -10798,7 +10805,7 @@ class XRangePoint extends ColumnPoint {
     static getColorByCategory(series, point) {
         const colors = series.options.colors || series.chart.options.colors, colorCount = colors ?
             colors.length :
-            series.chart.options.chart.colorCount, colorIndex = point.y % colorCount, color = colors && colors[colorIndex];
+            series.chart.options.chart.colorCount, colorIndex = point.y % colorCount, color = colors?.[colorIndex];
         return {
             colorIndex: colorIndex,
             color: color
@@ -11058,7 +11065,7 @@ class XRangeSeries extends ColumnSeries {
     }
     alignDataLabel(point) {
         const oldPlotX = point.plotX;
-        point.plotX = XRangeSeries_pick(point.dlBox && point.dlBox.centerX, point.plotX);
+        point.plotX = XRangeSeries_pick(point.dlBox?.centerX, point.plotX);
         if (point.dataLabel && point.shapeArgs?.width) {
             point.dataLabel.css({
                 width: `${point.shapeArgs.width}px`
@@ -11071,7 +11078,7 @@ class XRangeSeries extends ColumnSeries {
      * @private
      */
     translatePoint(point) {
-        const xAxis = this.xAxis, yAxis = this.yAxis, metrics = this.columnMetrics, options = this.options, minPointLength = options.minPointLength || 0, oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2, seriesXOffset = this.pointXOffset = metrics.offset, posX = XRangeSeries_pick(point.x2, point.x + (point.len || 0)), borderRadius = options.borderRadius, plotTop = this.chart.plotTop, plotLeft = this.chart.plotLeft;
+        const xAxis = this.xAxis, yAxis = this.yAxis, metrics = this.columnMetrics, options = this.options, minPointLength = options.minPointLength || 0, oldColWidth = (point.shapeArgs?.width || 0) / 2, seriesXOffset = this.pointXOffset = metrics.offset, posX = XRangeSeries_pick(point.x2, point.x + (point.len || 0)), borderRadius = options.borderRadius, plotTop = this.chart.plotTop, plotLeft = this.chart.plotLeft;
         let plotX = point.plotX, plotX2 = xAxis.translate(posX, 0, 0, 0, 1);
         const length = Math.abs(plotX2 - plotX), inverted = this.chart.inverted, borderWidth = XRangeSeries_pick(options.borderWidth, 1);
         let widthDifference, partialFill, yOffset = metrics.offset, pointHeight = Math.round(metrics.width), dlLeft, dlRight, dlWidth, clipRectWidth;
@@ -11330,7 +11337,7 @@ highcharts_SeriesRegistry_commonjs_highcharts_SeriesRegistry_commonjs2_highchart
 
 ;// ./code/es-modules/masters/modules/xrange.src.js
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/xrange
  * @requires highcharts
  *
@@ -11987,7 +11994,7 @@ var BrokenAxis;
         static lin2Val(val) {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const breakArray = brokenAxis && brokenAxis.breakArray;
+            const breakArray = brokenAxis?.breakArray;
             if (!breakArray || !BrokenAxis_isNumber(val)) {
                 return val;
             }
@@ -12012,7 +12019,7 @@ var BrokenAxis;
         static val2Lin(val) {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const breakArray = brokenAxis && brokenAxis.breakArray;
+            const breakArray = brokenAxis?.breakArray;
             if (!breakArray || !BrokenAxis_isNumber(val)) {
                 return val;
             }
@@ -12461,7 +12468,7 @@ function onAfterGetTitlePosition(e) {
         // Compute anchor points for each of the title align options
         const { axisTitle, height: axisHeight, horiz, left: axisLeft, offset, opposite, options, top: axisTop, width: axisWidth } = axis;
         const tickSize = axis.tickSize();
-        const titleWidth = axisTitle && axisTitle.getBBox().width;
+        const titleWidth = axisTitle?.getBBox().width;
         const xOption = options.title.x;
         const yOption = options.title.y;
         const titleMargin = GridAxis_pick(options.title.margin, horiz ? 5 : 10);
@@ -12563,7 +12570,7 @@ function onAfterRender() {
                     > _________________________
         Into this:    |______|______|______|__|
                                                 */
-        if (axis.grid && axis.grid.isOuterAxis() && axis.axisLine) {
+        if (axis.grid?.isOuterAxis() && axis.axisLine) {
             const lineWidth = options.lineWidth;
             if (lineWidth) {
                 const linePath = axis.getLinePath(lineWidth), startPoint = linePath[0], endPoint = linePath[1], 
@@ -12647,13 +12654,12 @@ function onAfterRender() {
                 axis.axisLine[axis.showAxis ? 'show' : 'hide']();
             }
         }
-        (grid && grid.columns || []).forEach((column) => column.render());
+        (grid?.columns || []).forEach((column) => column.render());
         // Manipulate the tick mark visibility
         // based on the axis.max- allows smooth scrolling.
         if (!axis.horiz &&
             axis.chart.hasRendered &&
-            (axis.scrollbar ||
-                (axis.linkedParent && axis.linkedParent.scrollbar)) &&
+            (axis.scrollbar || axis.linkedParent?.scrollbar) &&
             axis.tickPositions.length) {
             const tickmarkOffset = axis.tickmarkOffset, lastTick = axis.tickPositions[axis.tickPositions.length - 1], firstTick = axis.tickPositions[0];
             let label, tickMark;
@@ -12698,7 +12704,7 @@ function onAfterRender() {
  */
 function onAfterSetAxisTranslation() {
     const axis = this;
-    const tickInfo = axis.tickPositions && axis.tickPositions.info;
+    const tickInfo = axis.tickPositions?.info;
     const options = axis.options;
     const gridOptions = options.grid || {};
     const userLabels = axis.userOptions.labels || {};
@@ -12834,9 +12840,7 @@ function onAfterSetOptions(e) {
                 !GridAxis_defined(userOptions.tickInterval) &&
                 !GridAxis_defined(userOptions.units)) {
                 gridAxisOptions.tickPositioner = function (min, max) {
-                    const parentInfo = (this.linkedParent &&
-                        this.linkedParent.tickPositions &&
-                        this.linkedParent.tickPositions.info);
+                    const parentInfo = this.linkedParent?.tickPositions?.info;
                     if (parentInfo) {
                         const units = (gridAxisOptions.units || []);
                         let unitIdx, count = 1, unitName = 'year';
@@ -12852,7 +12856,7 @@ function onAfterSetOptions(e) {
                         if (unit) {
                             unitName = unit[0] || 'year';
                             const counts = unit[1];
-                            count = counts && counts[0] || 1;
+                            count = counts?.[0] || 1;
                             // In case the base X axis shows years, make the
                             // secondary axis show ten times the years (#11427)
                         }
@@ -12893,7 +12897,7 @@ function onAfterSetOptions(e) {
 function onAfterSetOptions2(e) {
     const axis = this;
     const userOptions = e.userOptions;
-    const gridOptions = userOptions && userOptions.grid || {};
+    const gridOptions = userOptions?.grid || {};
     const columns = gridOptions.columns;
     // Add column options to the parent axis. Children has their column options
     // set on init in onGridAxisAfterInit.
@@ -12935,7 +12939,7 @@ function onAfterTickSize(e) {
  */
 function GridAxis_onChartAfterSetChartSize() {
     this.axes.forEach((axis) => {
-        (axis.grid && axis.grid.columns || []).forEach((column) => {
+        (axis.grid?.columns || []).forEach((column) => {
             column.setAxisSize();
             column.setAxisTranslation();
         });
@@ -13051,8 +13055,7 @@ function onTickAfterGetLabelPosition(e) {
  */
 function onTickLabelFormat(ctx) {
     const { axis, value } = ctx;
-    if (axis.options.grid &&
-        axis.options.grid.enabled) {
+    if (axis.options.grid?.enabled) {
         const tickPos = axis.tickPositions;
         const series = (axis.linkedParent || axis).series[0];
         const isFirst = value === tickPos[0];
@@ -13095,7 +13098,7 @@ function onTickLabelFormat(ctx) {
  *       ticks and not the labels directly?
  */
 function onTrimTicks() {
-    const axis = this, options = axis.options, gridOptions = options.grid || {}, categoryAxis = axis.categories, tickPositions = axis.tickPositions, firstPos = tickPositions[0], secondPos = tickPositions[1], lastPos = tickPositions[tickPositions.length - 1], beforeLastPos = tickPositions[tickPositions.length - 2], linkedMin = axis.linkedParent && axis.linkedParent.min, linkedMax = axis.linkedParent && axis.linkedParent.max, min = linkedMin || axis.min, max = linkedMax || axis.max, tickInterval = axis.tickInterval, startLessThanMin = ( // #19845
+    const axis = this, options = axis.options, gridOptions = options.grid || {}, categoryAxis = axis.categories, tickPositions = axis.tickPositions, firstPos = tickPositions[0], secondPos = tickPositions[1], lastPos = tickPositions[tickPositions.length - 1], beforeLastPos = tickPositions[tickPositions.length - 2], linkedMin = axis.linkedParent?.min, linkedMax = axis.linkedParent?.max, min = linkedMin || axis.min, max = linkedMax || axis.max, tickInterval = axis.tickInterval, startLessThanMin = ( // #19845
     GridAxis_isNumber(min) &&
         min >= firstPos + tickInterval &&
         min < secondPos), endMoreThanMin = (GridAxis_isNumber(min) &&
@@ -13544,7 +13547,7 @@ function renderLabelIcon(tick, params) {
  * @private
  */
 function wrapGetLabelPosition(proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
-    const tick = this, lbOptions = TreeGridTick_pick(tick.options && tick.options.labels, labelOptions), pos = tick.pos, axis = tick.axis, isTreeGrid = axis.type === 'treegrid', result = proceed.apply(tick, [x, y, label, horiz, lbOptions, tickmarkOffset, index, step]);
+    const tick = this, lbOptions = TreeGridTick_pick(tick.options?.labels, labelOptions), pos = tick.pos, axis = tick.axis, isTreeGrid = axis.type === 'treegrid', result = proceed.apply(tick, [x, y, label, horiz, lbOptions, tickmarkOffset, index, step]);
     let mapOfPosToGridNode, node, level;
     if (isTreeGrid) {
         const { width = 0, padding = axis.linkedParent ? 0 : 5 } = (lbOptions && TreeGridTick_isObject(lbOptions.symbol, true) ?
@@ -13553,8 +13556,8 @@ function wrapGetLabelPosition(proceed, x, y, label, horiz, labelOptions, tickmar
             lbOptions.indentation :
             0);
         mapOfPosToGridNode = axis.treeGrid.mapOfPosToGridNode;
-        node = mapOfPosToGridNode && mapOfPosToGridNode[pos];
-        level = (node && node.depth) || 1;
+        node = mapOfPosToGridNode?.[pos];
+        level = node?.depth || 1;
         result.x += (
         // Add space for symbols
         (width + (padding * 2)) +
@@ -13569,7 +13572,7 @@ function wrapGetLabelPosition(proceed, x, y, label, horiz, labelOptions, tickmar
 function wrapRenderLabel(proceed) {
     const tick = this, { pos, axis, label, treeGrid: tickGrid, options: tickOptions } = tick, icon = tickGrid?.labelIcon, labelElement = label?.element, { treeGrid: axisGrid, options: axisOptions, chart, tickPositions } = axis, mapOfPosToGridNode = axisGrid.mapOfPosToGridNode, labelOptions = TreeGridTick_pick(tickOptions?.labels, axisOptions?.labels), symbolOptions = (labelOptions && TreeGridTick_isObject(labelOptions.symbol, true) ?
         labelOptions.symbol :
-        {}), node = mapOfPosToGridNode && mapOfPosToGridNode[pos], { descendants, depth } = node || {}, hasDescendants = node && descendants && descendants > 0, level = depth, isTreeGridElement = (axis.type === 'treegrid') && labelElement, shouldRender = tickPositions.indexOf(pos) > -1, prefixClassName = 'highcharts-treegrid-node-', prefixLevelClass = prefixClassName + 'level-', styledMode = chart.styledMode;
+        {}), node = mapOfPosToGridNode?.[pos], { descendants, depth } = node || {}, hasDescendants = node && descendants && descendants > 0, level = depth, isTreeGridElement = (axis.type === 'treegrid') && labelElement, shouldRender = tickPositions.indexOf(pos) > -1, prefixClassName = 'highcharts-treegrid-node-', prefixLevelClass = prefixClassName + 'level-', styledMode = chart.styledMode;
     let collapsed, addClassName, removeClassName;
     if (isTreeGridElement && node) {
         // Add class name for hierarchical styling.
@@ -14205,8 +14208,7 @@ function onBeforeRender(e) {
                     seriesData.forEach(function (pointOptions) {
                         // For using keys, or when using primitive points,
                         // rebuild the data structure
-                        if (foundPrimitivePoint ||
-                            (s.options.keys && s.options.keys.length)) {
+                        if (foundPrimitivePoint || s.options.keys?.length) {
                             pointOptions = s.pointClass.prototype
                                 .optionsToObject
                                 .call({ series: s }, pointOptions);
@@ -14274,8 +14276,8 @@ function onBeforeRender(e) {
                 TreeGridAxis_getLevelOptions({
                     defaults: labelOptions,
                     from: 1,
-                    levels: labelOptions && labelOptions.levels,
-                    to: axis.treeGrid.tree && axis.treeGrid.tree.height
+                    levels: labelOptions?.levels,
+                    to: axis.treeGrid.tree?.height
                 });
             // Setting initial collapsed nodes
             if (e.type === 'beforeRender') {
@@ -14516,7 +14518,7 @@ function wrapRedraw(proceed) {
     if (isTreeGrid && axis.visible) {
         axis.tickPositions.forEach(function (pos) {
             const tick = axis.ticks[pos];
-            if (tick.label && tick.label.attachedTreeGridEvents) {
+            if (tick.label?.attachedTreeGridEvents) {
                 TreeGridAxis_removeEvent(tick.label.element);
                 tick.label.attachedTreeGridEvents = false;
             }
@@ -14673,7 +14675,7 @@ class TreeGridAxisAdditions {
             const pos = +key;
             if (pos >= roundedMin &&
                 pos <= roundedMax &&
-                !(axis.brokenAxis && axis.brokenAxis.isInAnyBreak(pos))) {
+                !axis.brokenAxis?.isInAnyBreak(pos)) {
                 arr.push(pos);
             }
             return arr;
@@ -14881,7 +14883,7 @@ highcharts_SeriesRegistry_commonjs_highcharts_SeriesRegistry_commonjs2_highchart
 
 ;// ./code/es-modules/masters/modules/gantt.src.js
 /**
- * @license Highcharts Gantt JS v12.1.2 (2024-12-21)
+ * @license Highcharts Gantt JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/gantt
  * @requires highcharts
  *

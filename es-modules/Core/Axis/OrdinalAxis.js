@@ -376,7 +376,7 @@ var OrdinalAxis;
             // On touch devices, let default function handle the pinching
             (!e.touches || e.touches.length <= 1)) {
             const mouseDownX = chart.mouseDownX, extremes = xAxis.getExtremes(), dataMin = extremes.dataMin, dataMax = extremes.dataMax, min = extremes.min, max = extremes.max, hoverPoints = chart.hoverPoints, closestPointRange = (xAxis.closestPointRange ||
-                (xAxis.ordinal && xAxis.ordinal.overscrollPointsRange)), pointPixelWidth = (xAxis.translationSlope *
+                xAxis.ordinal?.overscrollPointsRange), pointPixelWidth = (xAxis.translationSlope *
                 (xAxis.ordinal.slope || closestPointRange)), 
             // How many ordinal units did we move?
             movedUnits = Math.round((mouseDownX - chartX) / pointPixelWidth), 
@@ -456,7 +456,7 @@ var OrdinalAxis;
         const xAxis = this.xAxis;
         // Destroy the extended ordinal index on updated data
         // and destroy extendedOrdinalPositions, #16055.
-        if (xAxis && xAxis.options.ordinal) {
+        if (xAxis?.options.ordinal) {
             delete xAxis.ordinal.index;
             delete xAxis.ordinal.originalOrdinalRange;
         }
@@ -490,10 +490,8 @@ var OrdinalAxis;
             // Final return value is based on ordinalIndex
         }
         else {
-            extendedOrdinalPositions =
-                ordinal.getExtendedPositions &&
-                    ordinal.getExtendedPositions();
-            if (!(extendedOrdinalPositions && extendedOrdinalPositions.length)) {
+            extendedOrdinalPositions = ordinal.getExtendedPositions?.();
+            if (!extendedOrdinalPositions?.length) {
                 return val;
             }
             const length = extendedOrdinalPositions.length;
@@ -984,7 +982,7 @@ var OrdinalAxis;
             return ret;
         }
         /**
-         * If overscroll is pixel or pecentage value, convert it to axis range.
+         * If overscroll is pixel or percentage value, convert it to axis range.
          *
          * @private
          * @param {number | string} overscroll
@@ -999,6 +997,16 @@ var OrdinalAxis;
             };
             if (isString(overscroll)) {
                 const overscrollValue = parseInt(overscroll, 10);
+                let isFullRange;
+                // #22334
+                if (defined(axis.min) && defined(axis.max) &&
+                    defined(axis.dataMin) && defined(axis.dataMax)) {
+                    isFullRange =
+                        axis.max - axis.min === axis.dataMax - axis.dataMin;
+                    if (!isFullRange) {
+                        this.originalOrdinalRange = axis.max - axis.min;
+                    }
+                }
                 if (/%$/.test(overscroll)) {
                     // If overscroll is percentage
                     return calculateOverscroll(overscrollValue / 100);
@@ -1007,7 +1015,8 @@ var OrdinalAxis;
                     // If overscroll is pixels, it is limited to 90% of the axis
                     // length to prevent division by zero
                     const limitedOverscrollValue = Math.min(overscrollValue, axis.len * 0.9), pixelToPercent = limitedOverscrollValue / axis.len;
-                    return calculateOverscroll(pixelToPercent / (1 - pixelToPercent));
+                    return calculateOverscroll(pixelToPercent /
+                        (isFullRange ? (1 - pixelToPercent) : 1));
                 }
                 // If overscroll is a string but not pixels or percentage,
                 // return 0 as no overscroll

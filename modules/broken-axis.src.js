@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/broken-axis
  * @requires highcharts
  *
@@ -442,7 +442,7 @@ var BrokenAxis;
         static lin2Val(val) {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const breakArray = brokenAxis && brokenAxis.breakArray;
+            const breakArray = brokenAxis?.breakArray;
             if (!breakArray || !isNumber(val)) {
                 return val;
             }
@@ -467,7 +467,7 @@ var BrokenAxis;
         static val2Lin(val) {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const breakArray = brokenAxis && brokenAxis.breakArray;
+            const breakArray = brokenAxis?.breakArray;
             if (!breakArray || !isNumber(val)) {
                 return val;
             }

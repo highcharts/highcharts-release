@@ -327,10 +327,10 @@ function isDOMElement(obj) {
  *         True if the argument is a class.
  */
 function isClass(obj) {
-    const c = obj && obj.constructor;
+    const c = obj?.constructor;
     return !!(isObject(obj, true) &&
         !isDOMElement(obj) &&
-        (c && c.name && c.name !== 'Object'));
+        (c?.name && c.name !== 'Object'));
 }
 /**
  * Utility function to check if an item is a number and it is finite (not NaN,
@@ -968,9 +968,7 @@ function destroyObjectProperties(obj, except, destructablesOnly) {
  *        The HTML node to discard.
  */
 function discardElement(element) {
-    if (element && element.parentElement) {
-        element.parentElement.removeChild(element);
-    }
+    element?.parentElement?.removeChild(element);
 }
 /**
  * Fix JS round off float errors.
@@ -1133,8 +1131,7 @@ function getStyle(el, prop, toInt) {
         let offsetWidth = Math.min(el.offsetWidth, el.scrollWidth);
         // In flex boxes, we need to use getBoundingClientRect and floor it,
         // because scrollWidth doesn't support subpixel precision (#6427) ...
-        const boundingClientRectWidth = el.getBoundingClientRect &&
-            el.getBoundingClientRect().width;
+        const boundingClientRectWidth = el.getBoundingClientRect?.().width;
         // ...unless if the containing div or its parents are transform-scaled
         // down, in which case the boundingClientRect can't be used as it is
         // also scaled down (#9871, #10498).

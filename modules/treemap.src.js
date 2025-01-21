@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/treemap
  * @requires highcharts
  *
@@ -1006,9 +1006,6 @@ Breadcrumbs.defaultOptions = Breadcrumbs_BreadcrumbsDefaults.options;
  * Callback function to format the breadcrumb text from scratch.
  *
  * @callback Highcharts.BreadcrumbsFormatterCallbackFunction
- *
- * @param {Highcharts.Event} event
- * Event.
  *
  * @param {Highcharts.BreadcrumbOptions} options
  * Breadcrumb options.
@@ -2818,7 +2815,7 @@ class TreemapSeries extends ScatterSeries {
             return;
         }
         let childrenValues = [];
-        if (level && level.layoutStartingDirection) {
+        if (level?.layoutStartingDirection) {
             area.direction = level.layoutStartingDirection === 'vertical' ?
                 0 :
                 1;
@@ -2908,7 +2905,7 @@ class TreemapSeries extends ScatterSeries {
                 options.enabled = false;
             }
             // If options for level exists, include them as well
-            if (level && level.dataLabels) {
+            if (level?.dataLabels) {
                 options = TreemapSeries_merge(options, level.dataLabels);
                 series.hasDataLabels = () => true;
             }
@@ -3192,7 +3189,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     onClickDrillToNode(event) {
-        const series = this, point = event.point, drillId = point && point.drillId;
+        const series = this, point = event.point, drillId = point?.drillId;
         // If a drill id is returned, add click event and cursor.
         if (TreemapSeries_isString(drillId)) {
             point.setState(''); // Remove hover
@@ -3206,7 +3203,7 @@ class TreemapSeries extends ScatterSeries {
     pointAttribs(point, state) {
         const series = this, mapOptionsToLevel = (TreemapSeries_isObject(series.mapOptionsToLevel) ?
             series.mapOptionsToLevel :
-            {}), level = point && mapOptionsToLevel[point.node.level] || {}, options = this.options, stateOptions = state && options.states && options.states[state] || {}, className = (point && point.getClassName()) || '', 
+            {}), level = point && mapOptionsToLevel[point.node.level] || {}, options = this.options, stateOptions = state && options.states && options.states[state] || {}, className = point?.getClassName() || '', 
         // Set attributes by precedence. Point trumps level trumps series.
         // Stroke width uses pick because it can be 0.
         attr = {
@@ -3215,11 +3212,11 @@ class TreemapSeries extends ScatterSeries {
                 stateOptions.borderColor ||
                 options.borderColor,
             'stroke-width': TreemapSeries_pick(point && point.borderWidth, level.borderWidth, stateOptions.borderWidth, options.borderWidth),
-            'dashstyle': (point && point.borderDashStyle) ||
+            'dashstyle': point?.borderDashStyle ||
                 level.borderDashStyle ||
                 stateOptions.borderDashStyle ||
                 options.borderDashStyle,
-            'fill': (point && point.color) || this.color
+            'fill': point?.color || this.color
         };
         let opacity;
         // Hide levels above the current view
@@ -3250,7 +3247,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     setColorRecursive(node, parentColor, colorIndex, index, siblings) {
-        const series = this, chart = series && series.chart, colors = chart && chart.options && chart.options.colors;
+        const series = this, chart = series?.chart, colors = chart?.options?.colors;
         if (node) {
             const colorInfo = TreemapSeries_getColor(node, {
                 colors: colors,
@@ -3407,7 +3404,7 @@ class TreemapSeries extends ScatterSeries {
         // Sort the children
         stableSort(children, (a, b) => ((a.sortIndex || 0) - (b.sortIndex || 0)));
         // Set the values
-        let val = TreemapSeries_pick(point && point.options.value, childrenTotal);
+        let val = TreemapSeries_pick(point?.options.value, childrenTotal);
         if (point) {
             point.value = val;
         }
@@ -3421,12 +3418,12 @@ class TreemapSeries extends ScatterSeries {
             children: children,
             childrenTotal: childrenTotal,
             // Ignore this node if point is not visible
-            ignore: !(TreemapSeries_pick(point && point.visible, true) && (val > 0)),
+            ignore: !(TreemapSeries_pick(point?.visible, true) && (val > 0)),
             isLeaf: tree.visible && !childrenTotal,
             isGroup: point?.isGroup,
             levelDynamic: (tree.level - (levelIsConstant ? 0 : nodeRoot.level)),
-            name: TreemapSeries_pick(point && point.name, ''),
-            sortIndex: TreemapSeries_pick(point && point.sortIndex, -val),
+            name: TreemapSeries_pick(point?.name, ''),
+            sortIndex: TreemapSeries_pick(point?.sortIndex, -val),
             val: val
         });
         return tree;

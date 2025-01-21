@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v12.1.2 (2024-12-21)
+ * @license Highcharts JS v12.1.2-modified (2025-01-21)
  * @module highcharts/modules/color-axis
  * @requires highcharts
  *
@@ -230,7 +230,7 @@ var ColorAxisComposition;
         let colorAxisItems = [], options, i;
         colorAxes.forEach(function (colorAxis) {
             options = colorAxis.options;
-            if (options && options.showInLegend) {
+            if (options?.showInLegend) {
                 // Data classes
                 if (options.dataClasses && options.visible) {
                     colorAxisItems = colorAxisItems.concat(colorAxis.getDataClassLegendSymbols());
@@ -285,8 +285,7 @@ var ColorAxisComposition;
      * @private
      */
     function onSeriesAfterTranslate() {
-        if (this.chart.colorAxis &&
-            this.chart.colorAxis.length ||
+        if (this.chart.colorAxis?.length ||
             this.colorAttribs) {
             this.translateColors();
         }
@@ -1350,7 +1349,7 @@ class ColorAxis extends (highcharts_Axis_commonjs_highcharts_Axis_commonjs2_high
      * @emits Highcharts.ColorAxis#event:drawCrosshair
      */
     drawCrosshair(e, point) {
-        const axis = this, legendItem = axis.legendItem || {}, plotX = point && point.plotX, plotY = point && point.plotY, axisPos = axis.pos, axisLen = axis.len;
+        const axis = this, legendItem = axis.legendItem || {}, plotX = point?.plotX, plotY = point?.plotY, axisPos = axis.pos, axisLen = axis.len;
         let crossPos;
         if (point) {
             crossPos = axis.toPixels(point.getNestedProperty(point.series.colorKey));
@@ -1429,7 +1428,7 @@ class ColorAxis extends (highcharts_Axis_commonjs_highcharts_Axis_commonjs2_high
             axis.destroyItems();
         }
         super.update(newOptions, redraw);
-        if (axis.legendItem && axis.legendItem.label) {
+        if (axis.legendItem?.label) {
             axis.setLegendColor();
             legend.colorizeItem(this, true);
         }

@@ -88,6 +88,8 @@ const defaultOptions = {
      *     }
      * });
      * ```
+     *
+     * @optionparent lang
      */
     lang: {
         /**
@@ -245,9 +247,8 @@ const defaultOptions = {
         resetZoomTitle: 'Reset zoom level 1:1'
     },
     /**
-     * Global options that don't apply to each chart. These options, like
-     * the `lang` options, must be set using the `Highcharts.setOptions`
-     * method.
+     * Global options that don't apply to each chart. These options must be set
+     * using the `Highcharts.setOptions` method.
      *
      * ```js
      * Highcharts.setOptions({
@@ -2621,7 +2622,7 @@ const defaultOptions = {
         text: 'Highcharts.com'
     }
 };
-const defaultTime = new Time(defaultOptions.time);
+const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
  * for outside modules wasn't enough because the setOptions method created a new
